@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
 
 [![Build Status](https://img.shields.io/travis/juliangut/negotiate.svg?style=flat-square)](https://travis-ci.org/juliangut/negotiate)
-[![Style Check](https://styleci.io/repos/XXXXXXXX/shield)](https://styleci.io/repos/XXXXXXXX)
+[![Style Check](https://styleci.io/repos/99729454/shield)](https://styleci.io/repos/99729454)
 [![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/negotiate.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/negotiate)
 [![Code Coverage](https://img.shields.io/coveralls/juliangut/negotiate.svg?style=flat-square)](https://coveralls.io/github/juliangut/negotiate)
 
