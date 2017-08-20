@@ -30,20 +30,24 @@ Require composer autoload file
 require './vendor/autoload.php';
 
 use Jgut\Negotiate\Negotiator;
+use Jgut\Negotiate\Scope\Language;
+use Jgut\Negotiate\Scope\MediaType;
 use Negotiation\LanguageNegotiator;
-use Negotiation\Negotiator as MediaTypeNegotiator;
+use Negotiation\Negotiator;
 
-$mediaTypeScope = new MediaType(['text/html', 'application/json'], new MediaTypeNegotiator());
-$languageScope = new Language(['en', 'es'], new LanguageNegotiator(), false); // If 
+$mediaTypeScope = new MediaType(['text/html', 'application/json'], new Negotiator());
+$languageScope = new Language(['en', 'es'], new LanguageNegotiator(), false); 
 
-$middleware = new Negotiator(['media' => $mediaTypeScope, 'language' => $languageScope]);
+$middleware = new Negotiator(['media' => $mediaTypeScope]);
+$middleware->addScope('language', $languageScope);
 $middleware->setAttributeName('negotiate');
 
 $next = function ($request, $response, ...) {
-    $negotiator = $request->getAttribute('negotiate');
+    $negotiator = $request->getAttribute('negotiate'); \Jgut\Negotiate\Provider
 
-    $negotiator->getMedia(); // \Negotiation\Accept
+    $negotiator->get('media'); // \Negotiation\Accept
     $negotiator->getLanguage(); // \Negotiation\AcceptLanguage
+    $negotiator->getLanguageLine(); // negotiated language string
     $negotiator->getCharset(); // null, not defined
 }
 
@@ -58,7 +62,7 @@ Additionally a third parameter controls behaviour if request header is empty or 
 
 ### Middleware
 
-Middleware requires a list of scopes with a name. Negotiation will take place in the middleware and:
+Middleware requires a list of scopes with a name. Negotiation will take place in the middleware
 
 * If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider`
 * If negotiation raises an error a 406 response will be returned from the middleware

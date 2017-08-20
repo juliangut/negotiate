@@ -59,15 +59,10 @@ class Provider
     public function __call($name, $arguments)
     {
         if (preg_match('/^get(.+)$/', $name, $match)) {
-            if (substr($match[1], -4) === 'Line') {
-                $parameter = ucfirst(substr($match[1], 0, -4));
-            } else {
-                $parameter = ucfirst($match[1]);
-            }
+            $getValue = substr($match[1], -4) === 'Line';
 
-            $accept = $this->get($parameter);
-
-            if ($accept && substr($match[1], -4) === 'Line') {
+            $accept = $this->get($getValue ? substr($match[1], 0, -4) : $match[1]);
+            if ($accept && $getValue) {
                 $accept = $accept->getValue();
             }
 

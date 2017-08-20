@@ -40,7 +40,6 @@ install:
 
 script:
   - if [[ $TEST_VERSION ]]; then composer qa && composer phpunit-clover ; fi
-
   - if [[ -z $TEST_VERSION ]]; then composer phpunit ; fi
 
 after_script:

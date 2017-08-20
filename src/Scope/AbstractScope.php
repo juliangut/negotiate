@@ -78,22 +78,22 @@ abstract class AbstractScope implements ScopeInterface
      */
     public function getAccept(ServerRequestInterface $request): AcceptHeader
     {
-        $header = $request->getHeaderLine($this->headerName);
-
         $accept = null;
+
+        $header = $request->getHeaderLine($this->headerName);
         if ($header !== '') {
             $accept = $this->negotiator->getBest($header, $this->priorityList);
         }
 
-        if ($accept === null && $this->useDefaults) {
-            $accept = $this->getDefaultAccept();
+        if ($accept === null) {
+            if ($this->useDefaults) {
+                return $this->getDefaultAccept();
+            }
+
+            throw new Exception(sprintf('"%s" header refused', $this->headerName));
         }
 
-        if ($accept !== null) {
-            return $accept;
-        }
-
-        throw new Exception(sprintf('"%s" header refused', $this->headerName));
+        return $accept;
     }
 
     /**

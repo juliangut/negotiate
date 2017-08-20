@@ -81,7 +81,7 @@
     "fix": "php-cs-fixer fix --verbose",
     "security": "composer outdated",
     "test": [
-      "@qa",
+      "@php-lint",
       "@phpunit",
       "@humbug"
     ]
