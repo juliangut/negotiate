@@ -13,28 +13,28 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
-use Jgut\Negotiate\Scope\MediaType;
-use Negotiation\Accept;
-use Negotiation\Negotiator;
+use Jgut\Negotiate\Scope\Encoding;
+use Negotiation\AcceptEncoding;
+use Negotiation\EncodingNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Media Type scope tests.
+ * Encoding scope tests.
  */
-class MediaTypeScopeTest extends TestCase
+class EncodingTest extends TestCase
 {
     public function testDefaultAccept()
     {
-        $negotiator = $this->getMockBuilder(Negotiator::class)
+        $negotiator = $this->getMockBuilder(EncodingNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
         $negotiator->expects($this->once())
             ->method('getBest')
             ->will($this->returnValue(null));
-        /* @var Negotiator $negotiator */
+        /* @var EncodingNegotiator $negotiator */
 
-        $scope = new MediaType(['test/html'], $negotiator, true);
+        $scope = new Encoding(['gzip'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +43,6 @@ class MediaTypeScopeTest extends TestCase
             ->will($this->returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(Accept::class, $scope->getAccept($request));
+        $this->assertInstanceOf(AcceptEncoding::class, $scope->getAccept($request));
     }
 }

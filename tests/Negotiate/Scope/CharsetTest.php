@@ -13,28 +13,28 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
-use Jgut\Negotiate\Scope\Language;
-use Negotiation\AcceptLanguage;
-use Negotiation\LanguageNegotiator;
+use Jgut\Negotiate\Scope\Charset;
+use Negotiation\AcceptCharset;
+use Negotiation\CharsetNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Language scope tests.
+ * Character set scope tests.
  */
-class LanguageScopeTest extends TestCase
+class CharsetTest extends TestCase
 {
     public function testDefaultAccept()
     {
-        $negotiator = $this->getMockBuilder(LanguageNegotiator::class)
+        $negotiator = $this->getMockBuilder(CharsetNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
         $negotiator->expects($this->once())
             ->method('getBest')
             ->will($this->returnValue(null));
-        /* @var LanguageNegotiator $negotiator */
+        /* @var CharsetNegotiator $negotiator */
 
-        $scope = new Language(['es'], $negotiator, true);
+        $scope = new Charset(['utf-8'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +43,6 @@ class LanguageScopeTest extends TestCase
             ->will($this->returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptLanguage::class, $scope->getAccept($request));
+        $this->assertInstanceOf(AcceptCharset::class, $scope->getAccept($request));
     }
 }

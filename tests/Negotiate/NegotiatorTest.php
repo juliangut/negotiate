@@ -16,6 +16,7 @@ namespace Jgut\Negotiate\Tests;
 use Jgut\Negotiate\Exception;
 use Jgut\Negotiate\Negotiator;
 use Jgut\Negotiate\Scope\AbstractScope;
+use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Tests\Stub\AcceptStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +27,39 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class NegotiatorTest extends TestCase
 {
+    public function testUnsupportedMediaType()
+    {
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var ServerRequestInterface $request */
+
+        $response = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $response->expects($this->once())
+            ->method('withStatus')
+            ->with(415)
+            ->will($this->returnSelf());
+        /* @var ResponseInterface $response */
+
+        $next = function ($request, $response) {
+            return $response;
+        };
+
+        $scope = $this->getMockBuilder(ContentType::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $scope->expects($this->once())
+            ->method('getAccept')
+            ->will($this->throwException(new Exception()));
+        /* @var \Jgut\Negotiate\Scope\ScopeInterface $scope */
+
+        $middleware = new Negotiator(['content-type' => $scope]);
+
+        $middleware($request, $response, $next);
+    }
+
     public function testNotAcceptable()
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)

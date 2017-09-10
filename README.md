@@ -65,7 +65,9 @@ Additionally a third parameter controls behaviour if request header is empty or 
 Middleware requires a list of scopes with a name. Negotiation will take place in the middleware
 
 * If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider`
-* If negotiation raises an error a 406 response will be returned from the middleware
+* If negotiation raises an error then
+  * A 415 response will be returned if Content-Type header negotiation failed
+  * A 406 response will be returned in any other case
 
 ## Contributing
 

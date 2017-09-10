@@ -13,28 +13,28 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
-use Jgut\Negotiate\Scope\Charset;
-use Negotiation\AcceptCharset;
-use Negotiation\CharsetNegotiator;
+use Jgut\Negotiate\Scope\MediaType;
+use Negotiation\Accept;
+use Negotiation\Negotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Character set scope tests.
+ * Media Type scope tests.
  */
-class CharsetScopeTest extends TestCase
+class MediaTypeTest extends TestCase
 {
     public function testDefaultAccept()
     {
-        $negotiator = $this->getMockBuilder(CharsetNegotiator::class)
+        $negotiator = $this->getMockBuilder(Negotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
         $negotiator->expects($this->once())
             ->method('getBest')
             ->will($this->returnValue(null));
-        /* @var CharsetNegotiator $negotiator */
+        /* @var Negotiator $negotiator */
 
-        $scope = new Charset(['utf-8'], $negotiator, true);
+        $scope = new MediaType(['test/html'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +43,6 @@ class CharsetScopeTest extends TestCase
             ->will($this->returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptCharset::class, $scope->getAccept($request));
+        $this->assertInstanceOf(Accept::class, $scope->getAccept($request));
     }
 }

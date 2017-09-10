@@ -13,28 +13,28 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
-use Jgut\Negotiate\Scope\Encoding;
-use Negotiation\AcceptEncoding;
-use Negotiation\EncodingNegotiator;
+use Jgut\Negotiate\Scope\Language;
+use Negotiation\AcceptLanguage;
+use Negotiation\LanguageNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Encoding scope tests.
+ * Language scope tests.
  */
-class EncodingScopeTest extends TestCase
+class LanguageTest extends TestCase
 {
     public function testDefaultAccept()
     {
-        $negotiator = $this->getMockBuilder(EncodingNegotiator::class)
+        $negotiator = $this->getMockBuilder(LanguageNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
         $negotiator->expects($this->once())
             ->method('getBest')
             ->will($this->returnValue(null));
-        /* @var EncodingNegotiator $negotiator */
+        /* @var LanguageNegotiator $negotiator */
 
-        $scope = new Encoding(['gzip'], $negotiator, true);
+        $scope = new Language(['es'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +43,6 @@ class EncodingScopeTest extends TestCase
             ->will($this->returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptEncoding::class, $scope->getAccept($request));
+        $this->assertInstanceOf(AcceptLanguage::class, $scope->getAccept($request));
     }
 }

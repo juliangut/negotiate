@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate;
 
+use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Scope\ScopeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -87,12 +88,16 @@ class Negotiator
     ): ResponseInterface {
         $provider = new Provider();
 
-        try {
-            foreach ($this->scopes as $name => $scope) {
+        foreach ($this->scopes as $name => $scope) {
+            try {
                 $provider->addAccept($name, $scope->getAccept($request));
+            } catch (Exception $exception) {
+                if ($scope instanceof ContentType) {
+                    return $response->withStatus(415);
+                }
+
+                return $response->withStatus(406);
             }
-        } catch (Exception $exception) {
-            return $response->withStatus(406);
         }
 
         return $next($request->withAttribute($this->attributeName, $provider), $response);
