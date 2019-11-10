@@ -24,25 +24,25 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class CharsetTest extends TestCase
 {
-    public function testDefaultAccept()
+    public function testDefaultAccept(): void
     {
         $negotiator = $this->getMockBuilder(CharsetNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $negotiator->expects($this->once())
+        $negotiator->expects(static::once())
             ->method('getBest')
-            ->will($this->returnValue(null));
+            ->will(static::returnValue(null));
         /* @var CharsetNegotiator $negotiator */
 
         $scope = new Charset(['utf-8'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        $request->expects($this->once())
+        $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will($this->returnValue('application/json'));
+            ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptCharset::class, $scope->getAccept($request));
+        static::assertInstanceOf(AcceptCharset::class, $scope->getAccept($request));
     }
 }

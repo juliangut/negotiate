@@ -24,25 +24,25 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class LanguageTest extends TestCase
 {
-    public function testDefaultAccept()
+    public function testDefaultAccept(): void
     {
         $negotiator = $this->getMockBuilder(LanguageNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $negotiator->expects($this->once())
+        $negotiator->expects(static::once())
             ->method('getBest')
-            ->will($this->returnValue(null));
+            ->will(static::returnValue(null));
         /* @var LanguageNegotiator $negotiator */
 
         $scope = new Language(['es'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        $request->expects($this->once())
+        $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will($this->returnValue('application/json'));
+            ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptLanguage::class, $scope->getAccept($request));
+        static::assertInstanceOf(AcceptLanguage::class, $scope->getAccept($request));
     }
 }

@@ -1,0 +1,6 @@
+parameters:
+  level: max
+  paths:
+    - src
+  ignoreErrors:
+    - '/^Call to an undefined method Negotiation\\AcceptHeader\|Negotiation\\BaseAccept::getValue\(\)\./'

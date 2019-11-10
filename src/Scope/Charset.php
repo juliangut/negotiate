@@ -25,7 +25,7 @@ class Charset extends AbstractScope
     /**
      * Charset scope constructor.
      *
-     * @param array             $priorityList
+     * @param string[]          $priorityList
      * @param CharsetNegotiator $negotiator
      * @param bool              $useDefaults
      */
@@ -39,6 +39,6 @@ class Charset extends AbstractScope
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new AcceptCharset(implode(';', $this->priorityList));
+        return new AcceptCharset(\implode(';', $this->priorityList));
     }
 }

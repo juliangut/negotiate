@@ -23,7 +23,7 @@ class Provider
     /**
      * Accept list.
      *
-     * @var AcceptHeader[]
+     * @var AcceptHeader[]|\Negotiation\BaseAccept[]
      */
     protected $acceptList = [];
 
@@ -33,9 +33,9 @@ class Provider
      * @param string       $name
      * @param AcceptHeader $accept
      */
-    public function addAccept(string $name, AcceptHeader $accept)
+    public function addAccept(string $name, AcceptHeader $accept): void
     {
-        $this->acceptList[ucfirst($name)] = $accept;
+        $this->acceptList[\ucfirst($name)] = $accept;
     }
 
     /**
@@ -47,22 +47,22 @@ class Provider
      */
     public function get(string $acceptName)
     {
-        return $this->acceptList[ucfirst($acceptName)] ?? null;
+        return $this->acceptList[\ucfirst($acceptName)] ?? null;
     }
 
     /**
-     * @param string $name
-     * @param array  $arguments
+     * @param string  $name
+     * @param mixed[] $arguments
      *
      * @return AcceptHeader|\Negotiation\BaseAccept|string|null
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
-        if (preg_match('/^get(.+)$/', $name, $match)) {
-            $getValue = substr($match[1], -4) === 'Line';
+        if (\preg_match('/^get(.+)$/', $name, $match) === 1) {
+            $getValue = \substr($match[1], -4) === 'Line';
 
-            $accept = $this->get($getValue ? substr($match[1], 0, -4) : $match[1]);
-            if ($accept && $getValue) {
+            $accept = $this->get($getValue ? \substr($match[1], 0, -4) : $match[1]);
+            if ($accept !== null && $getValue) {
                 $accept = $accept->getValue();
             }
 

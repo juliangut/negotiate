@@ -33,7 +33,7 @@ abstract class AbstractScope implements ScopeInterface
     /**
      * List of negotiation priorities.
      *
-     * @var array
+     * @var string[]
      */
     protected $priorityList;
 
@@ -55,7 +55,7 @@ abstract class AbstractScope implements ScopeInterface
      * AbstractScope constructor.
      *
      * @param string             $headerName
-     * @param array              $priorityList
+     * @param string[]           $priorityList
      * @param AbstractNegotiator $negotiator
      * @param bool               $useDefaults
      */
@@ -90,7 +90,7 @@ abstract class AbstractScope implements ScopeInterface
                 return $this->getDefaultAccept();
             }
 
-            throw new Exception(sprintf('"%s" header refused', $this->headerName));
+            throw new Exception(\sprintf('"%s" header refused', $this->headerName));
         }
 
         return $accept;

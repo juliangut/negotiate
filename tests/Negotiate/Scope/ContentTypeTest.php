@@ -24,25 +24,25 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ContentTypeTest extends TestCase
 {
-    public function testDefaultAccept()
+    public function testDefaultAccept(): void
     {
         $negotiator = $this->getMockBuilder(Negotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $negotiator->expects($this->once())
+        $negotiator->expects(static::once())
             ->method('getBest')
-            ->will($this->returnValue(null));
+            ->will(static::returnValue(null));
         /* @var Negotiator $negotiator */
 
         $scope = new ContentType(['test/html'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        $request->expects($this->once())
+        $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will($this->returnValue('application/json'));
+            ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(Accept::class, $scope->getAccept($request));
+        static::assertInstanceOf(Accept::class, $scope->getAccept($request));
     }
 }

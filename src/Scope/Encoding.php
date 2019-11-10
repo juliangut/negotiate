@@ -25,7 +25,7 @@ class Encoding extends AbstractScope
     /**
      * Encoding scope constructor.
      *
-     * @param array              $priorityList
+     * @param string[]           $priorityList
      * @param EncodingNegotiator $negotiator
      * @param bool               $useDefaults
      */
@@ -39,6 +39,6 @@ class Encoding extends AbstractScope
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new AcceptEncoding(implode(';', $this->priorityList));
+        return new AcceptEncoding(\implode(';', $this->priorityList));
     }
 }

@@ -15,21 +15,17 @@ namespace Jgut\Negotiate;
 
 use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Scope\ScopeInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Negotiator middleware.
  */
-class Negotiator
+class Negotiator implements MiddlewareInterface
 {
-    /**
-     * List of negotiation scopes.
-     *
-     * @var ScopeInterface[]
-     */
-    protected $scopes = [];
-
     /**
      * Request attribute name.
      *
@@ -38,15 +34,30 @@ class Negotiator
     protected $attributeName = 'negotiation';
 
     /**
+     * List of negotiation scopes.
+     *
+     * @var ScopeInterface[]
+     */
+    protected $scopes = [];
+
+    /**
+     * @var ResponseFactoryInterface
+     */
+    protected $responseFactory;
+
+    /**
      * Negotiator constructor.
      *
-     * @param ScopeInterface[] $scopes
+     * @param ScopeInterface[]         $scopes
+     * @param ResponseFactoryInterface $responseFactory
      */
-    public function __construct(array $scopes)
+    public function __construct(array $scopes, ResponseFactoryInterface $responseFactory)
     {
         foreach ($scopes as $name => $scope) {
             $this->addScope($name, $scope);
         }
+
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -55,7 +66,7 @@ class Negotiator
      * @param string         $name
      * @param ScopeInterface $scope
      */
-    protected function addScope(string $name, ScopeInterface $scope)
+    protected function addScope(string $name, ScopeInterface $scope): void
     {
         $this->scopes[$name] = $scope;
     }
@@ -65,27 +76,16 @@ class Negotiator
      *
      * @param string $attributeName
      */
-    final public function setAttributeName(string $attributeName)
+    final public function setAttributeName(string $attributeName): void
     {
         $this->attributeName = $attributeName;
     }
 
     /**
-     * Negotiate request.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
-     *
-     * @throws Exception
-     *
-     * @return ResponseInterface
+     * {@inheritdoc}
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $provider = new Provider();
 
         foreach ($this->scopes as $name => $scope) {
@@ -93,13 +93,13 @@ class Negotiator
                 $provider->addAccept($name, $scope->getAccept($request));
             } catch (Exception $exception) {
                 if ($scope instanceof ContentType) {
-                    return $response->withStatus(415);
+                    return $this->responseFactory->createResponse(415);
                 }
 
-                return $response->withStatus(406);
+                return $this->responseFactory->createResponse(406);
             }
         }
 
-        return $next($request->withAttribute($this->attributeName, $provider), $response);
+        return $handler->handle($request->withAttribute($this->attributeName, $provider));
     }
 }

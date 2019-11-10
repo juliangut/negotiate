@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProviderTest extends TestCase
 {
-    public function testAccess()
+    public function testAccess(): void
     {
         $provider = new Provider();
 
@@ -30,10 +30,10 @@ class ProviderTest extends TestCase
 
         $provider->addAccept('mediaType', $mediaType);
 
-        $this->assertEquals($mediaType, $provider->get('mediaType'));
-        $this->assertEquals($mediaType, $provider->getMediaType());
-        $this->assertEquals('application/json', $provider->getMediaTypeLine());
-        $this->assertNull($provider->getUnknown());
-        $this->assertNull($provider->unknown());
+        static::assertEquals($mediaType, $provider->get('mediaType'));
+        static::assertEquals($mediaType, $provider->getMediaType());
+        static::assertEquals('application/json', $provider->getMediaTypeLine());
+        static::assertNull($provider->getUnknown());
+        static::assertNull($provider->unknown());
     }
 }

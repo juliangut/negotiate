@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.1-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate)
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
 
@@ -33,25 +33,35 @@ use Jgut\Negotiate\Negotiator;
 use Jgut\Negotiate\Scope\Language;
 use Jgut\Negotiate\Scope\MediaType;
 use Negotiation\LanguageNegotiator;
-use Negotiation\Negotiator;
+use Negotiation\Negotiator as MediaNegotiator;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-$mediaTypeScope = new MediaType(['text/html', 'application/json'], new Negotiator());
-$languageScope = new Language(['en', 'es'], new LanguageNegotiator(), false); 
+$scopes = [
+    'media' => new MediaType(['text/html', 'application/json'], new MediaNegotiator()),
+    'language' => new Language(['en', 'es'], new LanguageNegotiator(), false),
+];
+/* @var \Psr\Http\Message\ResponseFactoryInterface $responseFactory */
+$responseFactory = new ResponseFactory(); 
 
-$middleware = new Negotiator(['media' => $mediaTypeScope]);
-$middleware->addScope('language', $languageScope);
+$middleware = new Negotiator($scopes, $responseFactory);
 $middleware->setAttributeName('negotiate');
 
-$next = function ($request, $response, ...) {
-    $negotiator = $request->getAttribute('negotiate'); \Jgut\Negotiate\Provider
+// Request handler
+new class() implements RequestHandlerInterface {
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $negotiator = $request->getAttribute('negotiate');
 
-    $negotiator->get('media'); // \Negotiation\Accept
-    $negotiator->getLanguage(); // \Negotiation\AcceptLanguage
-    $negotiator->getLanguageLine(); // negotiated language string
-    $negotiator->getCharset(); // null, not defined
-}
-
-$middleware($request, $response, $next);
+        $negotiator->get('media'); // \Negotiation\Accept
+        $negotiator->getLanguage(); // \Negotiation\AcceptLanguage
+        $negotiator->getLanguageLine(); // negotiated language string
+        $negotiator->getCharset(); // null, not defined
+        
+        // ...
+    }
+};
 ```
 
 ### Scopes
@@ -64,10 +74,10 @@ Additionally a third parameter controls behaviour if request header is empty or 
 
 Middleware requires a list of scopes with a name. Negotiation will take place in the middleware
 
-* If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider`
+* If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider` object
 * If negotiation raises an error then
-  * A 415 response will be returned if Content-Type header negotiation failed
-  * A 406 response will be returned in any other case
+  * A 415 response will be returned if Content-Type header negotiation fails
+  * A 406 response will be returned if any other negotiation fails
 
 ## Contributing
 

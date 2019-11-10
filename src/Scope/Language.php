@@ -25,7 +25,7 @@ class Language extends AbstractScope
     /**
      * Language scope constructor.
      *
-     * @param array              $priorityList
+     * @param string[]           $priorityList
      * @param LanguageNegotiator $negotiator
      * @param bool               $useDefaults
      */
@@ -39,6 +39,6 @@ class Language extends AbstractScope
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new AcceptLanguage(implode(';', $this->priorityList));
+        return new AcceptLanguage(\implode(';', $this->priorityList));
     }
 }

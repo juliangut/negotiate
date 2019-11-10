@@ -24,25 +24,25 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class EncodingTest extends TestCase
 {
-    public function testDefaultAccept()
+    public function testDefaultAccept(): void
     {
         $negotiator = $this->getMockBuilder(EncodingNegotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $negotiator->expects($this->once())
+        $negotiator->expects(static::once())
             ->method('getBest')
-            ->will($this->returnValue(null));
+            ->will(static::returnValue(null));
         /* @var EncodingNegotiator $negotiator */
 
         $scope = new Encoding(['gzip'], $negotiator, true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        $request->expects($this->once())
+        $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will($this->returnValue('application/json'));
+            ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        $this->assertInstanceOf(AcceptEncoding::class, $scope->getAccept($request));
+        static::assertInstanceOf(AcceptEncoding::class, $scope->getAccept($request));
     }
 }

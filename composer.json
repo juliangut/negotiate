@@ -22,22 +22,28 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^7.0",
-    "psr/http-message": "^1.0",
+    "php": "^7.1",
+    "psr/http-server-middleware": "^1.0",
     "willdurand/negotiation": "^2.0"
   },
   "require-dev": {
+    "brainmaestro/composer-git-hooks": "^2.5",
     "friendsofphp/php-cs-fixer": "^2.0",
-    "humbug/humbug": "~1.0@dev",
+    "infection/infection": "^0.9",
     "phpmd/phpmd": "^2.0",
-    "phpmetrics/phpmetrics": "^2.0",
-    "phpstan/phpstan": "~0.8",
-    "phpunit/phpunit": "^5.7|^6.0",
-    "sebastian/phpcpd": "^2.0",
-    "squizlabs/php_codesniffer": "^2.0"
+    "phpstan/extension-installer": "^1.0",
+    "phpstan/phpstan": "~0.11.12",
+    "phpstan/phpstan-deprecation-rules": "~0.11.2",
+    "phpstan/phpstan-strict-rules": "~0.11.1",
+    "phpunit/phpunit": "^7.5|^8.0",
+    "povils/phpmnd": "^2.0",
+    "roave/security-advisories": "dev-master",
+    "sebastian/phpcpd": "^4.0",
+    "squizlabs/php_codesniffer": "^3.0",
+    "thecodingmachine/phpstan-strict-rules": "^0.11.2",
+    "zendframework/zend-diactoros": "^2.0"
   },
-  "suggest": {
-  },
+  "repositories": [],
   "autoload": {
     "psr-4": {
       "Jgut\\Negotiate\\": "src/"
@@ -48,42 +54,54 @@
       "Jgut\\Negotiate\\Tests\\": "tests/Negotiate/"
     }
   },
-  "bin": [
-  ],
+  "bin": [],
   "config": {
     "preferred-install": "dist",
     "sort-packages": true
   },
   "scripts": {
-    "php-lint": "php -l src && php -l tests",
-    "phpcs": "phpcs --standard=PSR2 src tests",
-    "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
-    "phpcpd": "phpcpd src",
-    "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
-    "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --offline src",
-    "phpstan": "phpstan analyse --level 7 src",
-    "phpunit": "phpunit",
-    "phpunit-coverage": "phpunit --coverage-html build/coverage",
-    "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
-    "humbug": "humbug",
+    "cghooks": "cghooks",
+    "post-install-cmd": "cghooks add --ignore-lock",
+    "post-update-cmd": "cghooks update",
+    "lint-php": "php -l src && php -l tests",
+    "lint-phpcs": "phpcs --standard=PSR2 src tests",
+    "lint-phpcs-fixer": "php-cs-fixer fix --config=.php_cs --dry-run --verbose",
+    "fix-phpcs": "php-cs-fixer fix --config=.php_cs --verbose",
+    "qa-phpcpd": "phpcpd src",
+    "qa-phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
+    "qa-phpmnd": "phpmnd ./ --exclude=tests",
+    "qa-phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress",
+    "test-phpunit": "phpunit",
+    "test-infection": "infection",
+    "report-phpunit-coverage": "phpunit --coverage-html build/coverage",
+    "report-phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
+    "lint": [
+      "@lint-php",
+      "@lint-phpcs",
+      "@lint-phpcs-fixer"
+    ],
+    "fix": [
+      "@fix-phpcs"
+    ],
     "qa": [
-      "@php-lint",
-      "@phpcs",
-      "@phpcs-lint",
-      "@phpcpd",
-      "@phpmd",
-      "@phpstan"
+      "@qa-phpcpd",
+      "@qa-phpmd",
+      "@qa-phpmnd",
+      "@qa-phpstan"
     ],
-    "reports": [
-      "@phpmetrics-report",
-      "@phpunit-coverage"
-    ],
-    "fix": "php-cs-fixer fix --verbose",
     "security": "composer outdated",
     "test": [
-      "@php-lint",
-      "@phpunit",
-      "@humbug"
+      "@test-phpunit",
+      "@test-infection"
+    ],
+    "report": [
+      "@report-phpunit-coverage",
+      "@report-phpunit-clover"
     ]
+  },
+  "extra": {
+    "hooks": {
+      "pre-commit": "composer lint && composer qa && composer test-phpunit"
+    }
   }
 }

@@ -25,7 +25,7 @@ class ContentType extends AbstractScope
     /**
      * MediaType scope constructor.
      *
-     * @param array      $priorityList
+     * @param string[]   $priorityList
      * @param Negotiator $negotiator
      * @param bool       $useDefaults
      */
@@ -39,6 +39,6 @@ class ContentType extends AbstractScope
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new Accept(implode(';', $this->priorityList));
+        return new Accept(\implode(';', $this->priorityList));
     }
 }
