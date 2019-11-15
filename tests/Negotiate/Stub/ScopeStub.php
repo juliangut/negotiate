@@ -30,20 +30,20 @@ class ScopeStub extends AbstractScope
     /**
      * ScopeStub constructor.
      *
-     * @param string             $headerName
+     * @param string             $header
      * @param array              $priorityList
      * @param AbstractNegotiator $negotiator
      * @param AcceptHeader       $defaultAccept
      * @param bool               $useDefaults
      */
     public function __construct(
-        string $headerName,
+        string $header,
         array $priorityList,
         AbstractNegotiator $negotiator,
         AcceptHeader $defaultAccept = null,
         bool $useDefaults = false
     ) {
-        parent::__construct($headerName, $priorityList, $negotiator, $useDefaults);
+        parent::__construct($header, $priorityList, $negotiator, $useDefaults);
 
         $this->defaultAccept = $defaultAccept;
     }

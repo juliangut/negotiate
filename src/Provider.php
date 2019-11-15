@@ -41,13 +41,13 @@ class Provider
     /**
      * Get accept.
      *
-     * @param string $acceptName
+     * @param string $name
      *
      * @return AcceptHeader|\Negotiation\BaseAccept|null
      */
-    public function get(string $acceptName)
+    public function get(string $name)
     {
-        return $this->acceptList[\ucfirst($acceptName)] ?? null;
+        return $this->acceptList[\ucfirst($name)] ?? null;
     }
 
     /**

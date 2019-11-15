@@ -53,20 +53,32 @@ class Negotiator implements MiddlewareInterface
      */
     public function __construct(array $scopes, ResponseFactoryInterface $responseFactory)
     {
-        foreach ($scopes as $name => $scope) {
-            $this->addScope($name, $scope);
-        }
+        $this->setScopes($scopes);
 
         $this->responseFactory = $responseFactory;
     }
 
     /**
-     * Add negotiation scope.
+     * Set negotiation scopes.
+     *
+     * @param array<string, ScopeInterface> $scopes
+     */
+    public function setScopes(array $scopes): void
+    {
+        $this->scopes = [];
+
+        foreach ($scopes as $name => $scope) {
+            $this->setScope($name, $scope);
+        }
+    }
+
+    /**
+     * Set negotiation scope.
      *
      * @param string         $name
      * @param ScopeInterface $scope
      */
-    protected function addScope(string $name, ScopeInterface $scope): void
+    public function setScope(string $name, ScopeInterface $scope): void
     {
         $this->scopes[$name] = $scope;
     }
