@@ -3,4 +3,7 @@ parameters:
   paths:
     - src
   ignoreErrors:
-    - '/^Call to an undefined method Negotiation\\AcceptHeader\|Negotiation\\BaseAccept::getValue\(\)\./'
+    - message: '/^Parameter #1 \$negotiated of class Jgut\\Negotiate\\Provider constructor expects array<string, Negotiation\\AcceptHeader>, array<int\|string, Negotiation\\AcceptHeader> given\.$/'
+      path: src/Negotiator.php
+    - message: '/^Call to an undefined method Negotiation\\AcceptHeader\|Negotiation\\BaseAccept::getValue\(\)\.$/'
+      path: src/Provider.php

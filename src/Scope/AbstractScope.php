@@ -24,13 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class AbstractScope implements ScopeInterface
 {
     /**
-     * Header name.
-     *
-     * @var string
-     */
-    protected $header;
-
-    /**
      * List of negotiation priorities.
      *
      * @var string[]
@@ -54,18 +47,12 @@ abstract class AbstractScope implements ScopeInterface
     /**
      * AbstractScope constructor.
      *
-     * @param string             $header
      * @param string[]           $priorityList
      * @param AbstractNegotiator $negotiator
      * @param bool               $useDefaults
      */
-    public function __construct(
-        string $header,
-        array $priorityList,
-        AbstractNegotiator $negotiator,
-        bool $useDefaults = true
-    ) {
-        $this->header = $header;
+    public function __construct(array $priorityList, AbstractNegotiator $negotiator, bool $useDefaults = true)
+    {
         $this->priorityList = $priorityList;
         $this->negotiator = $negotiator;
         $this->useDefaults = $useDefaults;
@@ -73,14 +60,12 @@ abstract class AbstractScope implements ScopeInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws Exception
      */
     public function getAccept(ServerRequestInterface $request): AcceptHeader
     {
         $accept = null;
 
-        $header = $request->getHeaderLine($this->header);
+        $header = $request->getHeaderLine($this->getHeaderName());
         if ($header !== '') {
             $accept = $this->negotiator->getBest($header, $this->priorityList);
         }
@@ -90,16 +75,21 @@ abstract class AbstractScope implements ScopeInterface
                 return $this->getDefaultAccept();
             }
 
-            throw new Exception(\sprintf('"%s" header refused', $this->header));
+            throw new Exception(\sprintf('"%s" header refused', $this->getHeaderName()));
         }
 
         return $accept;
     }
 
     /**
-     * Get default Accept header.
+     * Get handled header name.
      *
-     * @return AcceptHeader
+     * @return string
+     */
+    abstract public function getHeaderName(): string;
+
+    /**
+     * {@inheritdoc}
      */
     abstract protected function getDefaultAccept(): AcceptHeader;
 }

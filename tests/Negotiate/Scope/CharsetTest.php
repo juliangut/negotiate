@@ -15,7 +15,6 @@ namespace Jgut\Negotiate\Tests\Scope;
 
 use Jgut\Negotiate\Scope\Charset;
 use Negotiation\AcceptCharset;
-use Negotiation\CharsetNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,15 +25,7 @@ class CharsetTest extends TestCase
 {
     public function testDefaultAccept(): void
     {
-        $negotiator = $this->getMockBuilder(CharsetNegotiator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $negotiator->expects(static::once())
-            ->method('getBest')
-            ->will(static::returnValue(null));
-        /* @var CharsetNegotiator $negotiator */
-
-        $scope = new Charset(['utf-8'], $negotiator, true);
+        $scope = new Charset(['utf-8'], true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +34,9 @@ class CharsetTest extends TestCase
             ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        static::assertInstanceOf(AcceptCharset::class, $scope->getAccept($request));
+        $accept = $scope->getAccept($request);
+
+        static::assertInstanceOf(AcceptCharset::class, $accept);
+        static::assertEquals('utf-8', $accept->getValue());
     }
 }

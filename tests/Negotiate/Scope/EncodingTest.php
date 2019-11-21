@@ -15,7 +15,6 @@ namespace Jgut\Negotiate\Tests\Scope;
 
 use Jgut\Negotiate\Scope\Encoding;
 use Negotiation\AcceptEncoding;
-use Negotiation\EncodingNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,15 +25,7 @@ class EncodingTest extends TestCase
 {
     public function testDefaultAccept(): void
     {
-        $negotiator = $this->getMockBuilder(EncodingNegotiator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $negotiator->expects(static::once())
-            ->method('getBest')
-            ->will(static::returnValue(null));
-        /* @var EncodingNegotiator $negotiator */
-
-        $scope = new Encoding(['gzip'], $negotiator, true);
+        $scope = new Encoding(['gzip'], true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +34,9 @@ class EncodingTest extends TestCase
             ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        static::assertInstanceOf(AcceptEncoding::class, $scope->getAccept($request));
+        $accept = $scope->getAccept($request);
+
+        static::assertInstanceOf(AcceptEncoding::class, $accept);
+        static::assertEquals('gzip', $accept->getValue());
     }
 }

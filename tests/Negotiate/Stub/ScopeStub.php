@@ -22,6 +22,8 @@ use Negotiation\AcceptHeader;
  */
 class ScopeStub extends AbstractScope
 {
+    protected $headerName;
+
     /**
      * @var AcceptHeader
      */
@@ -30,21 +32,22 @@ class ScopeStub extends AbstractScope
     /**
      * ScopeStub constructor.
      *
-     * @param string             $header
+     * @param string             $headerName
      * @param array              $priorityList
      * @param AbstractNegotiator $negotiator
      * @param AcceptHeader       $defaultAccept
      * @param bool               $useDefaults
      */
     public function __construct(
-        string $header,
+        string $headerName,
         array $priorityList,
         AbstractNegotiator $negotiator,
         AcceptHeader $defaultAccept = null,
         bool $useDefaults = false
     ) {
-        parent::__construct($header, $priorityList, $negotiator, $useDefaults);
+        parent::__construct($priorityList, $negotiator, $useDefaults);
 
+        $this->headerName = $headerName;
         $this->defaultAccept = $defaultAccept;
     }
 
@@ -54,5 +57,13 @@ class ScopeStub extends AbstractScope
     protected function getDefaultAccept(): AcceptHeader
     {
         return $this->defaultAccept;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderName(): string
+    {
+        return $this->headerName;
     }
 }

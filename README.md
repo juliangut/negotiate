@@ -32,32 +32,29 @@ require './vendor/autoload.php';
 use Jgut\Negotiate\Negotiator;
 use Jgut\Negotiate\Scope\Language;
 use Jgut\Negotiate\Scope\MediaType;
-use Negotiation\LanguageNegotiator;
-use Negotiation\Negotiator as MediaNegotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 $scopes = [
-    'media' => new MediaType(['text/html', 'application/json'], new MediaNegotiator()),
-    'language' => new Language(['en', 'es'], new LanguageNegotiator(), false),
+    new MediaType(['text/html', 'application/json']),
+    new Language(['en', 'es'], false),
 ];
 /* @var \Psr\Http\Message\ResponseFactoryInterface $responseFactory */
-$responseFactory = new ResponseFactory(); 
 
 $middleware = new Negotiator($scopes, $responseFactory);
-$middleware->setAttributeName('negotiate');
+$middleware->setAttributeName('negotiationProvider');
 
 // Request handler
 new class() implements RequestHandlerInterface {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $negotiator = $request->getAttribute('negotiate');
+        $negotiationProvider = $request->getAttribute('negotiationProvider');
 
-        $negotiator->get('media'); // \Negotiation\Accept
-        $negotiator->getLanguage(); // \Negotiation\AcceptLanguage
-        $negotiator->getLanguageLine(); // negotiated language string
-        $negotiator->getCharset(); // null, not defined
+        $negotiationProvider->get('accept'); // \Negotiation\Accept
+        $negotiationProvider->getAcceptLanguage(); // \Negotiation\AcceptLanguage
+        $negotiationProvider->getAcceptLanguageLine(); // negotiated language string
+        $negotiationProvider->getAcceptCharset(); // null, not defined
         
         // ...
     }
@@ -72,10 +69,10 @@ Additionally a third parameter controls behaviour if request header is empty or 
 
 ### Middleware
 
-Middleware requires a list of scopes with a name. Negotiation will take place in the middleware
+Middleware requires a list of negotiation scopes. Negotiation will take place in the middleware
 
 * If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider` object
-* If negotiation raises an error then
+* If negotiation goes south
   * A 415 response will be returned if Content-Type header negotiation fails
   * A 406 response will be returned if any other negotiation fails
 

@@ -15,7 +15,6 @@ namespace Jgut\Negotiate\Tests\Scope;
 
 use Jgut\Negotiate\Scope\Language;
 use Negotiation\AcceptLanguage;
-use Negotiation\LanguageNegotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,15 +25,7 @@ class LanguageTest extends TestCase
 {
     public function testDefaultAccept(): void
     {
-        $negotiator = $this->getMockBuilder(LanguageNegotiator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $negotiator->expects(static::once())
-            ->method('getBest')
-            ->will(static::returnValue(null));
-        /* @var LanguageNegotiator $negotiator */
-
-        $scope = new Language(['es'], $negotiator, true);
+        $scope = new Language(['es'], true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +34,9 @@ class LanguageTest extends TestCase
             ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        static::assertInstanceOf(AcceptLanguage::class, $scope->getAccept($request));
+        $accept = $scope->getAccept($request);
+
+        static::assertInstanceOf(AcceptLanguage::class, $accept);
+        static::assertEquals('es', $accept->getValue());
     }
 }

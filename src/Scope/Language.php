@@ -25,13 +25,20 @@ class Language extends AbstractScope
     /**
      * Language scope constructor.
      *
-     * @param string[]           $priorityList
-     * @param LanguageNegotiator $negotiator
-     * @param bool               $useDefaults
+     * @param string[] $priorityList
+     * @param bool     $useDefaults
      */
-    public function __construct(array $priorityList, LanguageNegotiator $negotiator, bool $useDefaults = true)
+    public function __construct(array $priorityList, bool $useDefaults = true)
     {
-        parent::__construct('accept-language', $priorityList, $negotiator, $useDefaults);
+        parent::__construct($priorityList, new LanguageNegotiator(), $useDefaults);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderName(): string
+    {
+        return 'accept-language';
     }
 
     /**

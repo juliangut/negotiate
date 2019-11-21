@@ -15,7 +15,6 @@ namespace Jgut\Negotiate\Tests\Scope;
 
 use Jgut\Negotiate\Scope\ContentType;
 use Negotiation\Accept;
-use Negotiation\Negotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,15 +25,7 @@ class ContentTypeTest extends TestCase
 {
     public function testDefaultAccept(): void
     {
-        $negotiator = $this->getMockBuilder(Negotiator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $negotiator->expects(static::once())
-            ->method('getBest')
-            ->will(static::returnValue(null));
-        /* @var Negotiator $negotiator */
-
-        $scope = new ContentType(['test/html'], $negotiator, true);
+        $scope = new ContentType(['text/html'], true);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,6 +34,9 @@ class ContentTypeTest extends TestCase
             ->will(static::returnValue('application/json'));
         /* @var ServerRequestInterface $request */
 
-        static::assertInstanceOf(Accept::class, $scope->getAccept($request));
+        $accept = $scope->getAccept($request);
+
+        static::assertInstanceOf(Accept::class, $accept);
+        static::assertEquals('text/html', $accept->getValue());
     }
 }

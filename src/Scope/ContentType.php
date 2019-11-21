@@ -25,13 +25,20 @@ class ContentType extends AbstractScope
     /**
      * MediaType scope constructor.
      *
-     * @param string[]   $priorityList
-     * @param Negotiator $negotiator
-     * @param bool       $useDefaults
+     * @param string[] $priorityList
+     * @param bool     $useDefaults
      */
-    public function __construct(array $priorityList, Negotiator $negotiator, bool $useDefaults = false)
+    public function __construct(array $priorityList, bool $useDefaults = false)
     {
-        parent::__construct('content-type', $priorityList, $negotiator, $useDefaults);
+        parent::__construct($priorityList, new Negotiator(), $useDefaults);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderName(): string
+    {
+        return 'content-type';
     }
 
     /**

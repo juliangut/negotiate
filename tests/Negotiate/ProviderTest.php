@@ -24,11 +24,9 @@ class ProviderTest extends TestCase
 {
     public function testAccess(): void
     {
-        $provider = new Provider();
-
         $mediaType = new AcceptStub('application/json');
 
-        $provider->addAccept('mediaType', $mediaType);
+        $provider = new Provider(['mediaType' => $mediaType]);
 
         static::assertEquals($mediaType, $provider->get('mediaType'));
         static::assertEquals($mediaType, $provider->getMediaType());

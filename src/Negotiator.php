@@ -61,25 +61,26 @@ class Negotiator implements MiddlewareInterface
     /**
      * Set negotiation scopes.
      *
-     * @param array<string, ScopeInterface> $scopes
+     * @param ScopeInterface[] $scopes
      */
     public function setScopes(array $scopes): void
     {
         $this->scopes = [];
 
-        foreach ($scopes as $name => $scope) {
-            $this->setScope($name, $scope);
+        foreach ($scopes as $scope) {
+            $this->setScope($scope);
         }
     }
 
     /**
      * Set negotiation scope.
      *
-     * @param string         $name
      * @param ScopeInterface $scope
      */
-    public function setScope(string $name, ScopeInterface $scope): void
+    public function setScope(ScopeInterface $scope): void
     {
+        $name = \str_replace(' ', '', \ucwords(\str_replace('-', ' ', $scope->getHeaderName())));
+
         $this->scopes[$name] = $scope;
     }
 
@@ -98,11 +99,11 @@ class Negotiator implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $provider = new Provider();
+        $negotiated = [];
 
         foreach ($this->scopes as $name => $scope) {
             try {
-                $provider->addAccept($name, $scope->getAccept($request));
+                $negotiated[$name] = $scope->getAccept($request);
             } catch (Exception $exception) {
                 if ($scope instanceof ContentType) {
                     return $this->responseFactory->createResponse(415);
@@ -112,6 +113,6 @@ class Negotiator implements MiddlewareInterface
             }
         }
 
-        return $handler->handle($request->withAttribute($this->attributeName, $provider));
+        return $handler->handle($request->withAttribute($this->attributeName, new Provider($negotiated)));
     }
 }

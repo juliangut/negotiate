@@ -25,13 +25,20 @@ class Charset extends AbstractScope
     /**
      * Charset scope constructor.
      *
-     * @param string[]          $priorityList
-     * @param CharsetNegotiator $negotiator
-     * @param bool              $useDefaults
+     * @param string[] $priorityList
+     * @param bool     $useDefaults
      */
-    public function __construct(array $priorityList, CharsetNegotiator $negotiator, bool $useDefaults = true)
+    public function __construct(array $priorityList, bool $useDefaults = true)
     {
-        parent::__construct('accept-charset', $priorityList, $negotiator, $useDefaults);
+        parent::__construct($priorityList, new CharsetNegotiator(), $useDefaults);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeaderName(): string
+    {
+        return 'accept-charset';
     }
 
     /**

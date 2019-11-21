@@ -18,14 +18,26 @@ use Negotiation\AcceptHeader;
 /**
  * Negotiation provider.
  */
-class Provider
+final class Provider
 {
     /**
-     * Accept list.
+     * Negotiated list.
      *
      * @var AcceptHeader[]|\Negotiation\BaseAccept[]
      */
-    protected $acceptList = [];
+    private $negotiated = [];
+
+    /**
+     * Provider constructor.
+     *
+     * @param array<string, AcceptHeader> $negotiated
+     */
+    public function __construct(array $negotiated)
+    {
+        foreach ($negotiated as $name => $accept) {
+            $this->addAccept($name, $accept);
+        }
+    }
 
     /**
      * Add accept header.
@@ -33,9 +45,9 @@ class Provider
      * @param string       $name
      * @param AcceptHeader $accept
      */
-    public function addAccept(string $name, AcceptHeader $accept): void
+    private function addAccept(string $name, AcceptHeader $accept): void
     {
-        $this->acceptList[\ucfirst($name)] = $accept;
+        $this->negotiated[\ucfirst($name)] = $accept;
     }
 
     /**
@@ -47,7 +59,7 @@ class Provider
      */
     public function get(string $name)
     {
-        return $this->acceptList[\ucfirst($name)] ?? null;
+        return $this->negotiated[\ucfirst($name)] ?? null;
     }
 
     /**
@@ -59,9 +71,10 @@ class Provider
     public function __call(string $name, array $arguments)
     {
         if (\preg_match('/^get(.+)$/', $name, $match) === 1) {
-            $getValue = \substr($match[1], -4) === 'Line';
+            $name = \ucfirst($match[1]);
+            $getValue = \substr($name, -4) === 'Line';
 
-            $accept = $this->get($getValue ? \substr($match[1], 0, -4) : $match[1]);
+            $accept = $this->get($getValue ? \substr($name, 0, -4) : $name);
             if ($accept !== null && $getValue) {
                 $accept = $accept->getValue();
             }

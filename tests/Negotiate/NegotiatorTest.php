@@ -77,7 +77,7 @@ class NegotiatorTest extends TestCase
             ->with(415)
             ->willReturn($response);
         /** @var ResponseFactoryInterface $responseFactory */
-        $middleware = new Negotiator(['content-type' => $scope], $responseFactory);
+        $middleware = new Negotiator([$scope], $responseFactory);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->disableOriginalConstructor()
@@ -110,7 +110,7 @@ class NegotiatorTest extends TestCase
             ->with(406)
             ->willReturn($response);
         /** @var ResponseFactoryInterface $responseFactory */
-        $middleware = new Negotiator(['accept' => $scope], $responseFactory);
+        $middleware = new Negotiator([$scope], $responseFactory);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->disableOriginalConstructor()
@@ -128,13 +128,16 @@ class NegotiatorTest extends TestCase
         $scope->expects(static::once())
             ->method('getAccept')
             ->will(static::returnValue(new AcceptStub('application/json')));
+        $scope->expects(static::any())
+            ->method('getHeaderName')
+            ->will(static::returnValue('accept'));
         /* @var \Jgut\Negotiate\Scope\ScopeInterface $scope */
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var ResponseFactoryInterface $responseFactory */
-        $middleware = new Negotiator(['accept' => $scope], $responseFactory);
+        $middleware = new Negotiator([$scope], $responseFactory);
         $middleware->setAttributeName('negotiated');
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
