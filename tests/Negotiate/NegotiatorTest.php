@@ -18,12 +18,12 @@ use Jgut\Negotiate\Negotiator;
 use Jgut\Negotiate\Scope\AbstractScope;
 use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Tests\Stub\AcceptStub;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response;
 
 /**
  * Negotiator middleware tests.
