@@ -63,9 +63,9 @@ new class() implements RequestHandlerInterface {
 
 ### Scopes
 
-Encapsulate negotiation in a context, for example media type or character set. Give it a list of priorities and a willdurand negotiator and you are good to go.
+Encapsulate negotiation in a context, for example media type or character set. Give it a list of priorities, and you are good to go.
 
-Additionally a third parameter controls behaviour if request header is empty or negotiation could not be determined successfully. By default your list of priorities will be used to create a `\Negotiation\AcceptHeader` you can use. If set to false a `\Jgut\Negotiation\Exception` will be thrown and captured by the middleware
+Additionally, a third parameter controls behaviour if request header is empty or negotiation could not be determined successfully. By default, your list of priorities will be used to create a `\Negotiation\AcceptHeader` you can use. If set to false a `\Jgut\Negotiation\Exception` will be thrown and captured by the middleware
 
 ### Middleware
 
