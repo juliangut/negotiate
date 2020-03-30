@@ -59,6 +59,26 @@ abstract class AbstractScope implements ScopeInterface
     }
 
     /**
+     * Prepend priority on top of priority list.
+     *
+     * @param string $priority
+     */
+    public function prependPriority(string $priority): void
+    {
+        \array_unshift($this->priorityList, $priority);
+    }
+
+    /**
+     * Append priority to priority list.
+     *
+     * @param string $priority
+     */
+    public function appendPriority(string $priority): void
+    {
+        $this->priorityList[] = $priority;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAccept(ServerRequestInterface $request): AcceptHeader

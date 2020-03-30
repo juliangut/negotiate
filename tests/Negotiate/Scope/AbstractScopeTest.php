@@ -25,6 +25,23 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class AbstractScopeTest extends TestCase
 {
+    public function testPriorityList(): void
+    {
+        $negotiator = $this->getMockBuilder(Negotiator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var Negotiator $negotiator */
+
+        $scope = new ScopeStub('accept', ['one', 'two'], $negotiator);
+
+        static::assertEquals(['one', 'two'], $scope->getPriorityList());
+
+        $scope->prependPriority('zero');
+        $scope->appendPriority('last');
+
+        static::assertEquals(['zero', 'one', 'two', 'last'], $scope->getPriorityList());
+    }
+
     public function testNoAccept(): void
     {
         $this->expectException(Exception::class);

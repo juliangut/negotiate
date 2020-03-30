@@ -52,6 +52,14 @@ class ScopeStub extends AbstractScope
     }
 
     /**
+     * @return array
+     */
+    public function getPriorityList(): array
+    {
+        return $this->priorityList;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getDefaultAccept(): AcceptHeader
