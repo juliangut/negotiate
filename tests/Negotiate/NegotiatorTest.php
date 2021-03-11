@@ -61,13 +61,11 @@ class NegotiatorTest extends TestCase
             ->getMock();
         $scope->expects(static::once())
             ->method('getAccept')
-            ->will(static::throwException(new Exception()));
-        /* @var \Jgut\Negotiate\Scope\ScopeInterface $scope */
+            ->willThrowException(new Exception());
 
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->disableOriginalConstructor()
@@ -76,13 +74,11 @@ class NegotiatorTest extends TestCase
             ->method('createResponse')
             ->with(415)
             ->willReturn($response);
-        /** @var ResponseFactoryInterface $responseFactory */
         $middleware = new Negotiator([$scope], $responseFactory);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ServerRequestInterface $request */
 
         $middleware->process($request, $this->requestHandler);
     }
@@ -94,13 +90,11 @@ class NegotiatorTest extends TestCase
             ->getMock();
         $scope->expects(static::once())
             ->method('getAccept')
-            ->will(static::throwException(new Exception()));
-        /* @var \Jgut\Negotiate\Scope\ScopeInterface $scope */
+            ->willThrowException(new Exception());
 
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->disableOriginalConstructor()
@@ -109,13 +103,11 @@ class NegotiatorTest extends TestCase
             ->method('createResponse')
             ->with(406)
             ->willReturn($response);
-        /** @var ResponseFactoryInterface $responseFactory */
         $middleware = new Negotiator([$scope], $responseFactory);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ServerRequestInterface $request */
 
         $middleware->process($request, $this->requestHandler);
     }
@@ -127,16 +119,14 @@ class NegotiatorTest extends TestCase
             ->getMock();
         $scope->expects(static::once())
             ->method('getAccept')
-            ->will(static::returnValue(new AcceptStub('application/json')));
+            ->willReturn(new AcceptStub('application/json'));
         $scope->expects(static::any())
             ->method('getHeaderName')
-            ->will(static::returnValue('accept'));
-        /* @var \Jgut\Negotiate\Scope\ScopeInterface $scope */
+            ->willReturn('accept');
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var ResponseFactoryInterface $responseFactory */
         $middleware = new Negotiator([$scope], $responseFactory);
         $middleware->setAttributeName('negotiated');
 
@@ -146,11 +136,10 @@ class NegotiatorTest extends TestCase
         $request->expects(static::once())
             ->method('withAttribute')
             ->with('negotiated')
-            ->will(static::returnSelf());
+            ->willReturnSelf();
         $request->expects(static::once())
             ->method('getMethod')
-            ->will(static::returnValue('GET'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('GET');
 
         $middleware->process($request, $this->requestHandler);
     }

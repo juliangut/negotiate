@@ -31,12 +31,11 @@ class LanguageTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
         $accept = $scope->getAccept($request);
 
         static::assertInstanceOf(AcceptLanguage::class, $accept);
-        static::assertEquals('es', $accept->getValue());
+        static::assertSame('es', $accept->getValue());
     }
 }

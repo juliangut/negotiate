@@ -1,11 +1,6 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.1-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.3-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate)
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
-
-[![Build Status](https://img.shields.io/travis/juliangut/negotiate.svg?style=flat-square)](https://travis-ci.org/juliangut/negotiate)
-[![Style Check](https://styleci.io/repos/99729454/shield)](https://styleci.io/repos/99729454)
-[![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/negotiate.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/negotiate)
-[![Code Coverage](https://img.shields.io/coveralls/juliangut/negotiate.svg?style=flat-square)](https://coveralls.io/github/juliangut/negotiate)
 
 [![Total Downloads](https://img.shields.io/packagist/dt/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate/stats)
 [![Monthly Downloads](https://img.shields.io/packagist/dm/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate/stats)

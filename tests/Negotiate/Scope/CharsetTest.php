@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Negotiate\Tests\Scope;
 
 use Jgut\Negotiate\Scope\Charset;
+use Negotiation\Accept;
 use Negotiation\AcceptCharset;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,12 +32,12 @@ class CharsetTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
+        /** @var Accept $accept */
         $accept = $scope->getAccept($request);
 
         static::assertInstanceOf(AcceptCharset::class, $accept);
-        static::assertEquals('utf-8', $accept->getValue());
+        static::assertSame('utf-8', $accept->getValue());
     }
 }

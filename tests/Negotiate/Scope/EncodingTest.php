@@ -31,12 +31,12 @@ class EncodingTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
+        /** @var AcceptEncoding $accept */
         $accept = $scope->getAccept($request);
 
         static::assertInstanceOf(AcceptEncoding::class, $accept);
-        static::assertEquals('gzip', $accept->getValue());
+        static::assertSame('gzip', $accept->getValue());
     }
 }

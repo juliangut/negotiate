@@ -30,27 +30,25 @@ class AbstractScopeTest extends TestCase
         $negotiator = $this->getMockBuilder(Negotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var Negotiator $negotiator */
 
         $scope = new ScopeStub('accept', ['one', 'two'], $negotiator);
 
-        static::assertEquals(['one', 'two'], $scope->getPriorityList());
+        static::assertSame(['one', 'two'], $scope->getPriorityList());
 
         $scope->prependPriority('zero');
         $scope->appendPriority('last');
 
-        static::assertEquals(['zero', 'one', 'two', 'last'], $scope->getPriorityList());
+        static::assertSame(['zero', 'one', 'two', 'last'], $scope->getPriorityList());
     }
 
     public function testNoAccept(): void
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('"accept" header refused');
+        $this->expectExceptionMessage('"accept" header refused.');
 
         $negotiator = $this->getMockBuilder(Negotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var Negotiator $negotiator */
 
         $scope = new ScopeStub('accept', [], $negotiator);
 
@@ -58,8 +56,7 @@ class AbstractScopeTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue(''));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('');
 
         $scope->getAccept($request);
     }
@@ -72,10 +69,6 @@ class AbstractScopeTest extends TestCase
         $negotiator = $this->getMockBuilder(Negotiator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $negotiator->expects(static::once())
-            ->method('getBest')
-            ->will(static::returnValue(null));
-        /* @var Negotiator $negotiator */
 
         $scope = new ScopeStub('accept', [], $negotiator, $accept, true);
 
@@ -83,10 +76,9 @@ class AbstractScopeTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
-        static::assertEquals($accept, $scope->getAccept($request));
+        static::assertSame($accept, $scope->getAccept($request));
     }
 
     public function testNegotiated(): void
@@ -99,18 +91,16 @@ class AbstractScopeTest extends TestCase
             ->getMock();
         $negotiator->expects(static::once())
             ->method('getBest')
-            ->will(static::returnValue($accept));
-        /* @var Negotiator $negotiator */
+            ->willReturn($accept);
 
-        $scope = new ScopeStub('accept', [], $negotiator);
+        $scope = new ScopeStub('accept', ['application/json'], $negotiator);
 
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
-        static::assertEquals($accept, $scope->getAccept($request));
+        static::assertSame($accept, $scope->getAccept($request));
     }
 }

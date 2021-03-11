@@ -31,12 +31,12 @@ class MediaTypeTest extends TestCase
             ->getMock();
         $request->expects(static::once())
             ->method('getHeaderLine')
-            ->will(static::returnValue('application/json'));
-        /* @var ServerRequestInterface $request */
+            ->willReturn('application/json');
 
+        /** @var Accept $accept */
         $accept = $scope->getAccept($request);
 
         static::assertInstanceOf(Accept::class, $accept);
-        static::assertEquals('text/html', $accept->getValue());
+        static::assertSame('text/html', $accept->getValue());
     }
 }

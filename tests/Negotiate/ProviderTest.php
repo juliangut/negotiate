@@ -28,9 +28,9 @@ class ProviderTest extends TestCase
 
         $provider = new Provider(['mediaType' => $mediaType]);
 
-        static::assertEquals($mediaType, $provider->get('mediaType'));
-        static::assertEquals($mediaType, $provider->getMediaType());
-        static::assertEquals('application/json', $provider->getMediaTypeLine());
+        static::assertSame($mediaType, $provider->get('mediaType'));
+        static::assertSame($mediaType, $provider->getMediaType());
+        static::assertSame('application/json', $provider->getMediaTypeLine());
         static::assertNull($provider->getUnknown());
         static::assertNull($provider->unknown());
     }
