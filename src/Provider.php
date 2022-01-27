@@ -57,6 +57,8 @@ final class Provider
      */
     public function __call(string $name, array $arguments)
     {
+        $accept = null;
+
         if (preg_match('/^get(.+)$/', $name, $match) === 1) {
             $name = ucfirst($match[1]);
             $getValue = mb_substr($name, -4) === 'Line';
@@ -65,8 +67,8 @@ final class Provider
             if ($accept !== null && $getValue) {
                 $accept = $accept->getValue();
             }
-
-            return $accept;
         }
+
+        return $accept;
     }
 }
