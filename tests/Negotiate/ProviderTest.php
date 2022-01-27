@@ -18,7 +18,7 @@ use Jgut\Negotiate\Tests\Stub\AcceptStub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Negotiation provider tests.
+ * @internal
  */
 class ProviderTest extends TestCase
 {

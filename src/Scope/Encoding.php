@@ -17,16 +17,10 @@ use Negotiation\AcceptEncoding;
 use Negotiation\AcceptHeader;
 use Negotiation\EncodingNegotiator;
 
-/**
- * Encoding scope.
- */
 class Encoding extends AbstractScope
 {
     /**
-     * Encoding scope constructor.
-     *
-     * @param string[] $priorityList
-     * @param bool     $useDefaults
+     * @param array<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = true)
     {
@@ -34,7 +28,7 @@ class Encoding extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHeaderName(): string
     {
@@ -42,10 +36,10 @@ class Encoding extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new AcceptEncoding(\implode(';', $this->priorityList));
+        return new AcceptEncoding(implode(';', $this->priorityList));
     }
 }

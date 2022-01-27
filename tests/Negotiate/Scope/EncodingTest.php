@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Encoding scope tests.
+ * @internal
  */
 class EncodingTest extends TestCase
 {

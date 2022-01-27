@@ -21,35 +21,19 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Negotiator middleware.
- */
 class Negotiator implements MiddlewareInterface
 {
-    /**
-     * Request attribute name.
-     *
-     * @var string
-     */
-    protected $attributeName = 'negotiation';
+    protected string $attributeName = 'negotiation';
 
     /**
-     * List of negotiation scopes.
-     *
-     * @var ScopeInterface[]
+     * @var array<ScopeInterface>
      */
-    protected $scopes = [];
+    protected array $scopes = [];
+
+    protected ResponseFactoryInterface $responseFactory;
 
     /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
-
-    /**
-     * Negotiator constructor.
-     *
-     * @param ScopeInterface[]         $scopes
-     * @param ResponseFactoryInterface $responseFactory
+     * @param array<ScopeInterface> $scopes
      */
     public function __construct(array $scopes, ResponseFactoryInterface $responseFactory)
     {
@@ -61,7 +45,7 @@ class Negotiator implements MiddlewareInterface
     /**
      * Set negotiation scopes.
      *
-     * @param ScopeInterface[] $scopes
+     * @param array<ScopeInterface> $scopes
      */
     public function setScopes(array $scopes): void
     {
@@ -74,20 +58,16 @@ class Negotiator implements MiddlewareInterface
 
     /**
      * Set negotiation scope.
-     *
-     * @param ScopeInterface $scope
      */
     public function setScope(ScopeInterface $scope): void
     {
-        $name = \str_replace(' ', '', \ucwords(\str_replace('-', ' ', $scope->getHeaderName())));
+        $name = str_replace(' ', '', ucwords(str_replace('-', ' ', $scope->getHeaderName())));
 
         $this->scopes[$name] = $scope;
     }
 
     /**
      * Set request attribute name.
-     *
-     * @param string $attributeName
      */
     final public function setAttributeName(string $attributeName): void
     {
@@ -95,7 +75,7 @@ class Negotiator implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

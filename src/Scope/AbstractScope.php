@@ -19,60 +19,37 @@ use Negotiation\AcceptHeader;
 use Negotiation\Exception\Exception as NegotiateException;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Abstract scope.
- */
 abstract class AbstractScope implements ScopeInterface
 {
     /**
-     * List of negotiation priorities.
-     *
-     * @var string[]
+     * @var array<string>
      */
-    protected $priorityList;
+    protected array $priorityList;
+
+    protected AbstractNegotiator $negotiator;
+
+    protected bool $useDefaults;
 
     /**
-     * Negotiator.
-     *
-     * @var AbstractNegotiator
-     */
-    protected $negotiator;
-
-    /**
-     * Use defaults.
-     *
-     * @var bool
-     */
-    protected $useDefaults;
-
-    /**
-     * AbstractScope constructor.
-     *
-     * @param string[]           $priorityList
-     * @param AbstractNegotiator $negotiator
-     * @param bool               $useDefaults
+     * @param array<string> $priorityList
      */
     public function __construct(array $priorityList, AbstractNegotiator $negotiator, bool $useDefaults = true)
     {
-        $this->priorityList = \array_values($priorityList);
+        $this->priorityList = array_values($priorityList);
         $this->negotiator = $negotiator;
         $this->useDefaults = $useDefaults;
     }
 
     /**
      * Prepend priority on top of priority list.
-     *
-     * @param string $priority
      */
     public function prependPriority(string $priority): void
     {
-        \array_unshift($this->priorityList, $priority);
+        array_unshift($this->priorityList, $priority);
     }
 
     /**
      * Append priority to priority list.
-     *
-     * @param string $priority
      */
     public function appendPriority(string $priority): void
     {
@@ -80,7 +57,7 @@ abstract class AbstractScope implements ScopeInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getAccept(ServerRequestInterface $request): AcceptHeader
     {
@@ -102,7 +79,7 @@ abstract class AbstractScope implements ScopeInterface
                 return $this->getDefaultAccept();
             }
 
-            throw new Exception(\sprintf('"%s" header refused.', $this->getHeaderName()));
+            throw new Exception(sprintf('"%s" header refused.', $this->getHeaderName()));
         }
 
         return $accept;
@@ -110,15 +87,11 @@ abstract class AbstractScope implements ScopeInterface
 
     /**
      * Get handled header name.
-     *
-     * @return string
      */
     abstract public function getHeaderName(): string;
 
     /**
      * Get default accept header.
-     *
-     * @return AcceptHeader
      */
     abstract protected function getDefaultAccept(): AcceptHeader;
 }

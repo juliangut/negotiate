@@ -17,26 +17,17 @@ use Jgut\Negotiate\Exception;
 use Negotiation\AcceptHeader;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Scope interface.
- */
 interface ScopeInterface
 {
     /**
      * Get negotiated accept header.
      *
-     * @param ServerRequestInterface $request
-     *
      * @throws Exception
-     *
-     * @return AcceptHeader
      */
     public function getAccept(ServerRequestInterface $request): AcceptHeader;
 
     /**
      * Get handled header name.
-     *
-     * @return string
      */
     public function getHeaderName(): string;
 }

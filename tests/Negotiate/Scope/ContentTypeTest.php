@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Content Type scope tests.
+ * @internal
  */
 class ContentTypeTest extends TestCase
 {

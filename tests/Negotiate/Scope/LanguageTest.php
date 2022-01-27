@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Language scope tests.
+ * @internal
  */
 class LanguageTest extends TestCase
 {

@@ -17,16 +17,10 @@ use Negotiation\Accept;
 use Negotiation\AcceptHeader;
 use Negotiation\Negotiator;
 
-/**
- * Media type scope.
- */
 class MediaType extends AbstractScope
 {
     /**
-     * MediaType scope constructor.
-     *
-     * @param string[] $priorityList
-     * @param bool     $useDefaults
+     * @param array<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = true)
     {
@@ -34,7 +28,7 @@ class MediaType extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHeaderName(): string
     {
@@ -42,10 +36,10 @@ class MediaType extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new Accept(\implode(';', $this->priorityList));
+        return new Accept(implode(';', $this->priorityList));
     }
 }

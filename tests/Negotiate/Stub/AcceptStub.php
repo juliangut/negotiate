@@ -16,9 +16,6 @@ namespace Jgut\Negotiate\Tests\Stub;
 use Negotiation\AcceptHeader;
 use Negotiation\BaseAccept;
 
-/**
- * Accept stub.
- */
 class AcceptStub extends BaseAccept implements AcceptHeader
 {
 }

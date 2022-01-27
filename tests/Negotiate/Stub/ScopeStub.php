@@ -18,29 +18,16 @@ use Negotiation\AbstractNegotiator;
 use Negotiation\Accept;
 use Negotiation\AcceptHeader;
 
-/**
- * Scope stub.
- */
 class ScopeStub extends AbstractScope
 {
-    /**
-     * @var string
-     */
-    protected $headerName;
+    protected string $headerName;
 
-    /**
-     * @var AcceptHeader|null
-     */
-    protected $defaultAccept;
+    protected ?AcceptHeader $defaultAccept;
 
     /**
      * ScopeStub constructor.
      *
-     * @param string             $headerName
-     * @param array<string>      $priorityList
-     * @param AbstractNegotiator $negotiator
-     * @param AcceptHeader|null  $defaultAccept
-     * @param bool               $useDefaults
+     * @param array<string> $priorityList
      */
     public function __construct(
         string $headerName,
@@ -56,7 +43,7 @@ class ScopeStub extends AbstractScope
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function getPriorityList(): array
     {
@@ -64,7 +51,7 @@ class ScopeStub extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function getDefaultAccept(): AcceptHeader
     {
@@ -72,7 +59,7 @@ class ScopeStub extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHeaderName(): string
     {

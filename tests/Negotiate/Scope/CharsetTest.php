@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Character set scope tests.
+ * @internal
  */
 class CharsetTest extends TestCase
 {

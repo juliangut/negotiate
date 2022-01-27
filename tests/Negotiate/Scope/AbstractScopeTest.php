@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Abstract scope tests.
+ * @internal
  */
 class AbstractScopeTest extends TestCase
 {

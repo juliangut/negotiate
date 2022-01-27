@@ -26,23 +26,20 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Negotiator middleware tests.
+ * @internal
  */
 class NegotiatorTest extends TestCase
 {
-    /**
-     * @var RequestHandlerInterface
-     */
-    protected $requestHandler;
+    protected RequestHandlerInterface $requestHandler;
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->requestHandler = new class() implements RequestHandlerInterface {
+        $this->requestHandler = new class () implements RequestHandlerInterface {
             /**
-             * {@inheritdoc}
+             * @inheritDoc
              */
             public function handle(ServerRequestInterface $request): ResponseInterface
             {

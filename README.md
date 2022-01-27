@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.3-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.4-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate)
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
 
@@ -41,7 +41,7 @@ $middleware = new Negotiator($scopes, $responseFactory);
 $middleware->setAttributeName('negotiationProvider');
 
 // Request handler
-new class() implements RequestHandlerInterface {
+new class () implements RequestHandlerInterface {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $negotiationProvider = $request->getAttribute('negotiationProvider');

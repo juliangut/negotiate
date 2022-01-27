@@ -17,16 +17,10 @@ use Negotiation\AcceptHeader;
 use Negotiation\AcceptLanguage;
 use Negotiation\LanguageNegotiator;
 
-/**
- * Language scope.
- */
 class Language extends AbstractScope
 {
     /**
-     * Language scope constructor.
-     *
-     * @param string[] $priorityList
-     * @param bool     $useDefaults
+     * @param array<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = true)
     {
@@ -34,7 +28,7 @@ class Language extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHeaderName(): string
     {
@@ -42,10 +36,10 @@ class Language extends AbstractScope
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function getDefaultAccept(): AcceptHeader
     {
-        return new AcceptLanguage(\implode(';', $this->priorityList));
+        return new AcceptLanguage(implode(';', $this->priorityList));
     }
 }

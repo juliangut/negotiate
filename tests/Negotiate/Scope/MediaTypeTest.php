@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Media Type scope tests.
+ * @internal
  */
 class MediaTypeTest extends TestCase
 {
