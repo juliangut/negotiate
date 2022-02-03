@@ -26,7 +26,7 @@ class Negotiator implements MiddlewareInterface
     protected string $attributeName = 'negotiation';
 
     /**
-     * @var array<ScopeInterface>
+     * @var array<string, ScopeInterface>
      */
     protected array $scopes = [];
 

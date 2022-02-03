@@ -14,11 +14,12 @@ declare(strict_types=1);
 namespace Jgut\Negotiate;
 
 use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 
 final class Provider
 {
     /**
-     * @var array<AcceptHeader>|array<\Negotiation\BaseAccept>
+     * @var array<AcceptHeader|BaseAccept>
      */
     private array $negotiated = [];
 
@@ -43,7 +44,7 @@ final class Provider
     /**
      * Get accept.
      *
-     * @return AcceptHeader|\Negotiation\BaseAccept|null
+     * @return AcceptHeader|BaseAccept|null
      */
     public function get(string $name)
     {
@@ -59,8 +60,8 @@ final class Provider
     {
         $accept = null;
 
-        if (preg_match('/^get(.+)$/', $name, $match) === 1) {
-            $name = ucfirst($match[1]);
+        if (preg_match('/^get(?P<accept>.+)$/', $name, $matches) === 1) {
+            $name = ucfirst($matches['accept']);
             $getValue = mb_substr($name, -4) === 'Line';
 
             $accept = $this->get($getValue ? mb_substr($name, 0, -4) : $name);
