@@ -1,5 +1,10 @@
 parameters:
   level: max
+  checkMissingCallableSignature: true
+  tipsOfTheDay: false
+  errorFormat: compact
+  parallel:
+    maximumNumberOfProcesses: 7
   paths:
     - src
   ignoreErrors:

@@ -25,8 +25,6 @@ class ScopeStub extends AbstractScope
     protected ?AcceptHeader $defaultAccept;
 
     /**
-     * ScopeStub constructor.
-     *
      * @param array<string> $priorityList
      */
     public function __construct(
@@ -50,17 +48,11 @@ class ScopeStub extends AbstractScope
         return $this->priorityList;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getDefaultAccept(): AcceptHeader
     {
         return $this->defaultAccept ?? new Accept('empty');
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHeaderName(): string
     {
         return $this->headerName;

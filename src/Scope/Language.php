@@ -27,17 +27,11 @@ class Language extends AbstractScope
         parent::__construct($priorityList, new LanguageNegotiator(), $useDefaults);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHeaderName(): string
     {
         return 'accept-language';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getDefaultAccept(): AcceptHeader
     {
         return new AcceptLanguage(implode(';', $this->priorityList));

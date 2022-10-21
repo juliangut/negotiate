@@ -27,17 +27,11 @@ class Charset extends AbstractScope
         parent::__construct($priorityList, new CharsetNegotiator(), $useDefaults);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHeaderName(): string
     {
         return 'accept-charset';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getDefaultAccept(): AcceptHeader
     {
         return new AcceptCharset(implode(';', $this->priorityList));

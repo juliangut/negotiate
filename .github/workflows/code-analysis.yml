@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -22,7 +22,7 @@ jobs:
           coverage: none
 
       - name: Composer install
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: "--prefer-dist"
 
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -56,7 +56,7 @@ jobs:
           coverage: none
 
       - name: Composer install
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@v2
         with:
           composer-options: "--prefer-dist"
 
@@ -64,7 +64,7 @@ jobs:
         run: make lint-php
 
       - name: Run check style
-        run: make lint-phpcs && make lint-phpcs-fixer
+        run: make lint-ecs
 
       - name: Run copy/paste detection
         run: make qa-phpcpd

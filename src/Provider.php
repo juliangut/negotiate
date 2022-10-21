@@ -33,17 +33,12 @@ final class Provider
         }
     }
 
-    /**
-     * Add accept header.
-     */
     private function addAccept(string $name, AcceptHeader $accept): void
     {
         $this->negotiated[ucfirst($name)] = $accept;
     }
 
     /**
-     * Get accept.
-     *
      * @return AcceptHeader|BaseAccept|null
      */
     public function get(string $name)

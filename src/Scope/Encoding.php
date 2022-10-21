@@ -27,17 +27,11 @@ class Encoding extends AbstractScope
         parent::__construct($priorityList, new EncodingNegotiator(), $useDefaults);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHeaderName(): string
     {
         return 'accept-encoding';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getDefaultAccept(): AcceptHeader
     {
         return new AcceptEncoding(implode(';', $this->priorityList));

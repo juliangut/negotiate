@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 interface ScopeInterface
 {
     /**
-     * Get negotiated accept header.
+     * Get negotiated Accept header.
      *
      * @throws Exception
      */

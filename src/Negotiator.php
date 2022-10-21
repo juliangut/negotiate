@@ -43,8 +43,6 @@ class Negotiator implements MiddlewareInterface
     }
 
     /**
-     * Set negotiation scopes.
-     *
      * @param array<ScopeInterface> $scopes
      */
     public function setScopes(array $scopes): void
@@ -56,9 +54,6 @@ class Negotiator implements MiddlewareInterface
         }
     }
 
-    /**
-     * Set negotiation scope.
-     */
     public function setScope(ScopeInterface $scope): void
     {
         $name = str_replace(' ', '', ucwords(str_replace('-', ' ', $scope->getHeaderName())));
@@ -66,17 +61,11 @@ class Negotiator implements MiddlewareInterface
         $this->scopes[$name] = $scope;
     }
 
-    /**
-     * Set request attribute name.
-     */
     final public function setAttributeName(string $attributeName): void
     {
         $this->attributeName = $attributeName;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $negotiated = [];

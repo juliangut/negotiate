@@ -32,19 +32,14 @@ class NegotiatorTest extends TestCase
 {
     protected RequestHandlerInterface $requestHandler;
 
-    /**
-     * @inheritDoc
-     */
     protected function setUp(): void
     {
-        $this->requestHandler = new class () implements RequestHandlerInterface {
-            /**
-             * @inheritDoc
-             */
+        $this->requestHandler = new class() implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response('php://temp');
-                $response->getBody()->write($request->getMethod());
+                $response->getBody()
+                    ->write($request->getMethod());
 
                 return $response;
             }

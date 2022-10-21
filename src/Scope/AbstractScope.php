@@ -48,17 +48,11 @@ abstract class AbstractScope implements ScopeInterface
         array_unshift($this->priorityList, $priority);
     }
 
-    /**
-     * Append priority to priority list.
-     */
     public function appendPriority(string $priority): void
     {
         $this->priorityList[] = $priority;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getAccept(ServerRequestInterface $request): AcceptHeader
     {
         $accept = null;
@@ -85,13 +79,7 @@ abstract class AbstractScope implements ScopeInterface
         return $accept;
     }
 
-    /**
-     * Get handled header name.
-     */
     abstract public function getHeaderName(): string;
 
-    /**
-     * Get default accept header.
-     */
     abstract protected function getDefaultAccept(): AcceptHeader;
 }

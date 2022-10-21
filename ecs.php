@@ -11,8 +11,8 @@
 
 declare(strict_types=1);
 
-use Jgut\CS\Fixer\FixerConfig74;
-use PhpCsFixer\Finder;
+use Jgut\ECS\Config\ConfigSet74;
+use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 $header = <<<'HEADER'
 negotiate (https://github.com/juliangut/negotiate).
@@ -23,13 +23,17 @@ Negotiation middleware.
 @author Julián Gutiérrez <juliangut@gmail.com>
 HEADER;
 
-$finder = Finder::create()
-    ->ignoreDotFiles(false)
-    ->exclude(['build', 'vendor'])
-    ->in(__DIR__)
-    ->name('.php-cs-fixer.php');
+return static function (ECSConfig $ecsConfig) use ($header): void {
+    $ecsConfig->paths([
+        __FILE__,
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ]);
 
-return (new FixerConfig74())
-    ->setHeader($header)
-    ->enablePhpUnitRules()
-    ->setFinder($finder);
+    $configSet = new ConfigSet74();
+
+    $configSet
+        ->setHeader($header)
+        ->enablePhpUnitRules()
+        ->configure($ecsConfig);
+};

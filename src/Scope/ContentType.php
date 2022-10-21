@@ -27,17 +27,11 @@ class ContentType extends AbstractScope
         parent::__construct($priorityList, new Negotiator(), $useDefaults);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getHeaderName(): string
     {
         return 'content-type';
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getDefaultAccept(): AcceptHeader
     {
         return new Accept(implode(';', $this->priorityList));
