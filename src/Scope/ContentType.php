@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Jgut\Negotiate\Scope;
 
 use Negotiation\Accept;
-use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 use Negotiation\Negotiator;
 
-class ContentType extends AbstractScope
+final class ContentType extends AbstractScope
 {
     /**
-     * @param array<string> $priorityList
+     * @param list<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = false)
     {
@@ -29,10 +29,10 @@ class ContentType extends AbstractScope
 
     public function getHeaderName(): string
     {
-        return 'content-type';
+        return 'Content-Type';
     }
 
-    protected function getDefaultAccept(): AcceptHeader
+    protected function getDefaultAccept(): BaseAccept
     {
         return new Accept(implode(';', $this->priorityList));
     }

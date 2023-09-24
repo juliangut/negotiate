@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.4-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D8.1-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate)
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
 
@@ -7,7 +7,7 @@
 
 # Negotiate
 
-Simple and flexible negotiation middleware based on [willdurand/negotiation](https://github.com/willdurand/Negotiation)
+Simple and flexible negotiation middleware using [willdurand/negotiation](https://github.com/willdurand/Negotiation)
 
 ## Installation
 
@@ -46,9 +46,9 @@ new class () implements RequestHandlerInterface {
     {
         $negotiationProvider = $request->getAttribute('negotiationProvider');
 
-        $negotiationProvider->get('accept'); // \Negotiation\Accept
+        $negotiationProvider->get('Accept-Language'); // \Negotiation\Accept
         $negotiationProvider->getAcceptLanguage(); // \Negotiation\AcceptLanguage
-        $negotiationProvider->getAcceptLanguageLine(); // negotiated language string
+        $negotiationProvider->getAcceptLanguageLine(); // Negotiated language string
         $negotiationProvider->getAcceptCharset(); // null, not defined
         
         // ...
@@ -60,13 +60,15 @@ new class () implements RequestHandlerInterface {
 
 Encapsulate negotiation in a context, for example media type or character set. Give it a list of priorities, and you are good to go.
 
-Additionally, a third parameter controls behaviour if request header is empty or negotiation could not be determined successfully. By default, your list of priorities will be used to create a `\Negotiation\AcceptHeader` you can use. If set to false a `\Jgut\Negotiation\Exception` will be thrown and captured by the middleware
+Additionally, a third parameter controls behaviour if request header is empty or negotiation could not be determined successfully. By default, your list of priorities will be used to create a `\Negotiation\AcceptHeader` you can use. If set to false a `\Jgut\Negotiation\NegotiatorException` will be thrown and captured by the middleware
 
 ### Middleware
 
 Middleware requires a list of negotiation scopes. Negotiation will take place in the middleware
 
-* If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider` object
+* If everything goes well request will have 
+  * Headers of each scope overridden with negotiation result
+  * An attribute with a `\Jgut\Negotiate\Provider` object with the result of the whole negotiation
 * If negotiation goes south
   * A 415 response will be returned if Content-Type header negotiation fails
   * A 406 response will be returned if any other negotiation fails

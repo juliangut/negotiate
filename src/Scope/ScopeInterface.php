@@ -13,18 +13,18 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Scope;
 
-use Jgut\Negotiate\Exception;
-use Negotiation\AcceptHeader;
+use Jgut\Negotiate\NegotiatorException;
+use Negotiation\BaseAccept;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface ScopeInterface
 {
     /**
-     * Get negotiated Accept header.
+     * Get negotiated header.
      *
-     * @throws Exception
+     * @throws NegotiatorException
      */
-    public function getAccept(ServerRequestInterface $request): AcceptHeader;
+    public function getAccept(ServerRequestInterface $request): BaseAccept;
 
     /**
      * Get handled header name.

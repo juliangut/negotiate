@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Jgut\Negotiate\Scope;
 
 use Negotiation\AcceptCharset;
-use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 use Negotiation\CharsetNegotiator;
 
-class Charset extends AbstractScope
+final class Charset extends AbstractScope
 {
     /**
-     * @param array<string> $priorityList
+     * @param list<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = true)
     {
@@ -29,10 +29,10 @@ class Charset extends AbstractScope
 
     public function getHeaderName(): string
     {
-        return 'accept-charset';
+        return 'Accept-Charset';
     }
 
-    protected function getDefaultAccept(): AcceptHeader
+    protected function getDefaultAccept(): BaseAccept
     {
         return new AcceptCharset(implode(';', $this->priorityList));
     }

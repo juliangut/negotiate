@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Jgut\Negotiate\Scope;
 
 use Negotiation\Accept;
-use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 use Negotiation\Negotiator;
 
-class MediaType extends AbstractScope
+final class MediaType extends AbstractScope
 {
     /**
-     * @param array<string> $priorityList
+     * @param list<string> $priorityList
      */
     public function __construct(array $priorityList, bool $useDefaults = true)
     {
@@ -29,10 +29,10 @@ class MediaType extends AbstractScope
 
     public function getHeaderName(): string
     {
-        return 'accept';
+        return 'Accept';
     }
 
-    protected function getDefaultAccept(): AcceptHeader
+    protected function getDefaultAccept(): BaseAccept
     {
         return new Accept(implode(';', $this->priorityList));
     }

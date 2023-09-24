@@ -19,12 +19,12 @@ use Negotiation\BaseAccept;
 final class Provider
 {
     /**
-     * @var array<AcceptHeader|BaseAccept>
+     * @var array<BaseAccept>
      */
     private array $negotiated = [];
 
     /**
-     * @param array<string, AcceptHeader> $negotiated
+     * @param array<string, BaseAccept> $negotiated
      */
     public function __construct(array $negotiated)
     {
@@ -33,13 +33,13 @@ final class Provider
         }
     }
 
-    private function addAccept(string $name, AcceptHeader $accept): void
+    private function addAccept(string $name, BaseAccept $accept): void
     {
         $this->negotiated[ucfirst($name)] = $accept;
     }
 
     /**
-     * @return AcceptHeader|BaseAccept|null
+     * @return BaseAccept|null
      */
     public function get(string $name)
     {

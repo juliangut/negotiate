@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate;
 
-use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Scope\ScopeInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,20 +29,18 @@ class Negotiator implements MiddlewareInterface
      */
     protected array $scopes = [];
 
-    protected ResponseFactoryInterface $responseFactory;
-
     /**
-     * @param array<ScopeInterface> $scopes
+     * @param list<ScopeInterface> $scopes
      */
-    public function __construct(array $scopes, ResponseFactoryInterface $responseFactory)
-    {
+    public function __construct(
+        array $scopes,
+        protected readonly ResponseFactoryInterface $responseFactory,
+    ) {
         $this->setScopes($scopes);
-
-        $this->responseFactory = $responseFactory;
     }
 
     /**
-     * @param array<ScopeInterface> $scopes
+     * @param list<ScopeInterface> $scopes
      */
     public function setScopes(array $scopes): void
     {
@@ -56,7 +53,7 @@ class Negotiator implements MiddlewareInterface
 
     public function setScope(ScopeInterface $scope): void
     {
-        $name = str_replace(' ', '', ucwords(str_replace('-', ' ', $scope->getHeaderName())));
+        $name = str_replace(' ', '', ucwords(str_replace('-', ' ', mb_strtolower($scope->getHeaderName()))));
 
         $this->scopes[$name] = $scope;
     }
@@ -73,15 +70,19 @@ class Negotiator implements MiddlewareInterface
         foreach ($this->scopes as $name => $scope) {
             try {
                 $negotiated[$name] = $scope->getAccept($request);
-            } catch (Exception $exception) {
-                if ($scope instanceof ContentType) {
+            } catch (NegotiatorException) {
+                if (mb_strtolower($scope->getHeaderName()) === 'content-type') {
                     return $this->responseFactory->createResponse(415);
                 }
 
                 return $this->responseFactory->createResponse(406);
             }
+
+            $request = $request->withAddedHeader($scope->getHeaderName(), $negotiated[$name]->getValue());
         }
 
-        return $handler->handle($request->withAttribute($this->attributeName, new Provider($negotiated)));
+        $request = $request->withAttribute($this->attributeName, new Provider($negotiated));
+
+        return $handler->handle($request);
     }
 }

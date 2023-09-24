@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
-use Jgut\Negotiate\Exception;
+use Jgut\Negotiate\NegotiatorException;
 use Jgut\Negotiate\Tests\Stub\ScopeStub;
-use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 use Negotiation\Negotiator;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +43,7 @@ class AbstractScopeTest extends TestCase
 
     public function testNoAccept(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(NegotiatorException::class);
         $this->expectExceptionMessage('"accept" header refused.');
 
         $negotiator = $this->getMockBuilder(Negotiator::class)
@@ -63,7 +63,8 @@ class AbstractScopeTest extends TestCase
 
     public function testDefaultAccept(): void
     {
-        $accept = $this->getMockBuilder(AcceptHeader::class)
+        $accept = $this->getMockBuilder(BaseAccept::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $negotiator = $this->getMockBuilder(Negotiator::class)
@@ -83,7 +84,8 @@ class AbstractScopeTest extends TestCase
 
     public function testNegotiated(): void
     {
-        $accept = $this->getMockBuilder(AcceptHeader::class)
+        $accept = $this->getMockBuilder(BaseAccept::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
         $negotiator = $this->getMockBuilder(Negotiator::class)
