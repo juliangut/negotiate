@@ -119,7 +119,8 @@ class NegotiatorTest extends TestCase
         $scope->expects(static::once())
             ->method('getAccept')
             ->willReturn(new AcceptStub('application/json'));
-        $scope->method('getHeaderName')
+        $scope->expects(static::any())
+            ->method('getHeaderName')
             ->willReturn('Accept');
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
