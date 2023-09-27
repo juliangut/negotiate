@@ -26,8 +26,8 @@ abstract class AbstractScope implements ScopeInterface
          * @var list<string> $priorityList
          */
         protected array $priorityList,
-        protected readonly AbstractNegotiator $negotiator,
-        protected readonly bool $useDefaults = true,
+        protected AbstractNegotiator $negotiator,
+        protected bool $useDefaults = true,
     ) {}
 
     /**

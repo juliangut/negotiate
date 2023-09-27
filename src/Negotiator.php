@@ -34,7 +34,7 @@ class Negotiator implements MiddlewareInterface
      */
     public function __construct(
         array $scopes,
-        protected readonly ResponseFactoryInterface $responseFactory,
+        protected ResponseFactoryInterface $responseFactory,
     ) {
         $this->setScopes($scopes);
     }

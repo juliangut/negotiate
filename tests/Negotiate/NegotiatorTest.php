@@ -131,7 +131,7 @@ class NegotiatorTest extends TestCase
 
         $requestHandler = new class ($this) implements RequestHandlerInterface {
             public function __construct(
-                private readonly TestCase $phpunitAssert,
+                private TestCase $phpunitAssert,
             ) {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
