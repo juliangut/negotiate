@@ -13,30 +13,60 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
+use Jgut\Negotiate\NegotiatorException;
+use Jgut\Negotiate\Provider;
 use Jgut\Negotiate\Scope\Encoding;
+use Laminas\Diactoros\ServerRequest;
 use Negotiation\AcceptEncoding;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @internal
  */
 class EncodingTest extends TestCase
 {
-    public function testDefaultAccept(): void
+    public function testNegotiationFailure(): void
     {
-        $scope = new Encoding(['gzip'], true);
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Encoding" header refused');
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->getMock();
-        $request->expects(static::once())
-            ->method('getHeaderLine')
-            ->willReturn('application/json');
+        $scope = new Encoding(['gzip']);
 
-        /** @var AcceptEncoding $accept */
-        $accept = $scope->getAccept($request);
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Encoding', 'deflate');
 
-        static::assertInstanceOf(AcceptEncoding::class, $accept);
-        static::assertSame('gzip', $accept->getValue());
+        $scope->negotiateRequest($request, 'provider');
+    }
+
+    public function testNegotiationDefault(): void
+    {
+        $scope = new Encoding(['gzip'], 'gzip');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Encoding', 'deflate');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptEncoding::class, $negotiationProvider->get('Accept-Encoding'));
+        static::assertSame('gzip', $negotiationProvider->get('Accept-Encoding')->getValue());
+        static::assertSame('gzip', $request->getHeaderLine('Accept-Encoding'));
+    }
+
+    public function testNegotiationSuccess(): void
+    {
+        $scope = new Encoding(['deflate'], 'gzip');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Encoding', 'deflate');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptEncoding::class, $negotiationProvider->get('Accept-Encoding'));
+        static::assertSame('deflate', $negotiationProvider->get('Accept-Encoding')->getValue());
+        static::assertSame('deflate', $request->getHeaderLine('Accept-Encoding'));
     }
 }

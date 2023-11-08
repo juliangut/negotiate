@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Negotiate\Scope;
 
 use Jgut\Negotiate\NegotiatorException;
+use Jgut\Negotiate\Provider;
 use Negotiation\AbstractNegotiator;
 use Negotiation\BaseAccept;
 use Negotiation\Exception\Exception as NegotiateException;
@@ -26,8 +27,6 @@ abstract class AbstractScope implements ScopeInterface
          * @var list<string> $priorityList
          */
         protected array $priorityList,
-        protected AbstractNegotiator $negotiator,
-        protected bool $useDefaults = true,
     ) {}
 
     /**
@@ -43,15 +42,33 @@ abstract class AbstractScope implements ScopeInterface
         $this->priorityList[] = $priority;
     }
 
-    public function getAccept(ServerRequestInterface $request): BaseAccept
+    public function negotiateRequest(ServerRequestInterface $request, string $attributeName): ServerRequestInterface
     {
-        $accept = null;
+        $negotiationResult = $this->getAccept($request);
 
+        /** @var Provider|null $negotiationProvider */
+        $negotiationProvider = $request->getAttribute($attributeName);
+        $negotiationProvider = ($negotiationProvider ?? new Provider([]))
+            ->withAccept($this->getHeaderName(), $negotiationResult);
+
+        return $request
+            ->withHeader($this->getHeaderName(), $negotiationResult->getValue())
+            ->withAttribute($attributeName, $negotiationProvider);
+    }
+
+    /**
+     * @throws NegotiatorException
+     */
+    protected function getAccept(ServerRequestInterface $request): BaseAccept
+    {
         $header = $request->getHeaderLine($this->getHeaderName());
+
+        $accept = null;
         if ($header !== '' && \count($this->priorityList) !== 0) {
             try {
                 /** @var BaseAccept|null $accept */
-                $accept = $this->negotiator->getBest($header, $this->priorityList);
+                $accept = $this->getNegotiator()
+                    ->getBest($header, $this->priorityList);
                 // @codeCoverageIgnoreStart
             } catch (NegotiateException) {
                 // @ignoreException
@@ -60,8 +77,9 @@ abstract class AbstractScope implements ScopeInterface
         }
 
         if ($accept === null) {
-            if ($this->useDefaults) {
-                return $this->getDefaultAccept();
+            $default = $this->getDefaultAccept();
+            if ($default !== null) {
+                return $default;
             }
 
             throw new NegotiatorException(sprintf('"%s" header refused.', $this->getHeaderName()));
@@ -72,5 +90,7 @@ abstract class AbstractScope implements ScopeInterface
 
     abstract public function getHeaderName(): string;
 
-    abstract protected function getDefaultAccept(): BaseAccept;
+    abstract protected function getNegotiator(): AbstractNegotiator;
+
+    abstract protected function getDefaultAccept(): ?BaseAccept;
 }

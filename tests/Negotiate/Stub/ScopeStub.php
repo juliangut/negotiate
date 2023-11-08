@@ -15,7 +15,6 @@ namespace Jgut\Negotiate\Tests\Stub;
 
 use Jgut\Negotiate\Scope\AbstractScope;
 use Negotiation\AbstractNegotiator;
-use Negotiation\Accept;
 use Negotiation\BaseAccept;
 
 /**
@@ -29,11 +28,10 @@ final class ScopeStub extends AbstractScope
     public function __construct(
         protected string $headerName,
         array $priorityList,
-        AbstractNegotiator $negotiator,
+        private AbstractNegotiator $negotiator,
         protected ?BaseAccept $defaultAccept = null,
-        bool $useDefaults = false,
     ) {
-        parent::__construct($priorityList, $negotiator, $useDefaults);
+        parent::__construct($priorityList);
     }
 
     /**
@@ -44,13 +42,18 @@ final class ScopeStub extends AbstractScope
         return $this->priorityList;
     }
 
-    protected function getDefaultAccept(): BaseAccept
-    {
-        return $this->defaultAccept ?? new Accept('empty');
-    }
-
     public function getHeaderName(): string
     {
         return $this->headerName;
+    }
+
+    protected function getNegotiator(): AbstractNegotiator
+    {
+        return $this->negotiator;
+    }
+
+    protected function getDefaultAccept(): ?BaseAccept
+    {
+        return $this->defaultAccept;
     }
 }

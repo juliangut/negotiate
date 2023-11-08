@@ -13,29 +13,60 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
+use Jgut\Negotiate\NegotiatorException;
+use Jgut\Negotiate\Provider;
 use Jgut\Negotiate\Scope\Language;
+use Laminas\Diactoros\ServerRequest;
 use Negotiation\AcceptLanguage;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @internal
  */
 class LanguageTest extends TestCase
 {
-    public function testDefaultAccept(): void
+    public function testNegotiationFailure(): void
     {
-        $scope = new Language(['es'], true);
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Language" header refused');
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->getMock();
-        $request->expects(static::once())
-            ->method('getHeaderLine')
-            ->willReturn('application/json');
+        $scope = new Language(['es']);
 
-        $accept = $scope->getAccept($request);
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Language', 'en');
 
-        static::assertInstanceOf(AcceptLanguage::class, $accept);
-        static::assertSame('es', $accept->getValue());
+        $scope->negotiateRequest($request, 'provider');
+    }
+
+    public function testNegotiationDefault(): void
+    {
+        $scope = new Language(['es'], 'es');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Language', 'en');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptLanguage::class, $negotiationProvider->get('Accept-Language'));
+        static::assertSame('es', $negotiationProvider->get('Accept-Language')->getValue());
+        static::assertSame('es', $request->getHeaderLine('Accept-Language'));
+    }
+
+    public function testNegotiationSuccess(): void
+    {
+        $scope = new Language(['en'], 'es');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Language', 'en');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptLanguage::class, $negotiationProvider->get('Accept-Language'));
+        static::assertSame('en', $negotiationProvider->get('Accept-Language')->getValue());
+        static::assertSame('en', $request->getHeaderLine('Accept-Language'));
     }
 }

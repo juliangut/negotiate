@@ -65,11 +65,9 @@ class Negotiator implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $negotiated = [];
-
-        foreach ($this->scopes as $name => $scope) {
+        foreach ($this->scopes as $scope) {
             try {
-                $negotiated[$name] = $scope->getAccept($request);
+                $request = $scope->negotiateRequest($request, $this->attributeName);
             } catch (NegotiatorException) {
                 if (mb_strtolower($scope->getHeaderName()) === 'content-type') {
                     return $this->responseFactory->createResponse(415);
@@ -77,11 +75,7 @@ class Negotiator implements MiddlewareInterface
 
                 return $this->responseFactory->createResponse(406);
             }
-
-            $request = $request->withAddedHeader($scope->getHeaderName(), $negotiated[$name]->getValue());
         }
-
-        $request = $request->withAttribute($this->attributeName, new Provider($negotiated));
 
         return $handler->handle($request);
     }

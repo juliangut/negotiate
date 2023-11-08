@@ -19,7 +19,7 @@ use Negotiation\BaseAccept;
 final class Provider
 {
     /**
-     * @var array<BaseAccept>
+     * @var array<string, BaseAccept>
      */
     private array $negotiated = [];
 
@@ -38,20 +38,23 @@ final class Provider
         $this->negotiated[ucfirst($name)] = $accept;
     }
 
-    /**
-     * @return BaseAccept|null
-     */
-    public function get(string $name)
+    public function withAccept(string $name, BaseAccept $accept): self
+    {
+        $negotiated = $this->negotiated;
+        $negotiated[$name] = $accept;
+
+        return new self($negotiated);
+    }
+
+    public function get(string $name): ?BaseAccept
     {
         return $this->negotiated[ucfirst($name)] ?? null;
     }
 
     /**
      * @param array<mixed> $arguments
-     *
-     * @return AcceptHeader|\Negotiation\BaseAccept|string|null
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): AcceptHeader|BaseAccept|string|null
     {
         $accept = null;
 
