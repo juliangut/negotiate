@@ -13,31 +13,60 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests\Scope;
 
+use Jgut\Negotiate\NegotiatorException;
+use Jgut\Negotiate\Provider;
 use Jgut\Negotiate\Scope\Charset;
-use Negotiation\Accept;
+use Laminas\Diactoros\ServerRequest;
 use Negotiation\AcceptCharset;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @internal
  */
 class CharsetTest extends TestCase
 {
-    public function testDefaultAccept(): void
+    public function testNegotiationFailure(): void
     {
-        $scope = new Charset(['utf-8'], true);
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Charset" header refused');
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->getMock();
-        $request->expects(static::once())
-            ->method('getHeaderLine')
-            ->willReturn('application/json');
+        $scope = new Charset(['utf-8']);
 
-        /** @var Accept $accept */
-        $accept = $scope->getAccept($request);
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Charset', 'iso-8601');
 
-        static::assertInstanceOf(AcceptCharset::class, $accept);
-        static::assertSame('utf-8', $accept->getValue());
+        $scope->negotiateRequest($request, 'provider');
+    }
+
+    public function testNegotiationDefault(): void
+    {
+        $scope = new Charset(['utf-8'], 'utf-8');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Charset', 'iso-8859-1');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptCharset::class, $negotiationProvider->get('Accept-Charset'));
+        static::assertSame('utf-8', $negotiationProvider->get('Accept-Charset')->getValue());
+        static::assertSame('utf-8', $request->getHeaderLine('Accept-Charset'));
+    }
+
+    public function testNegotiationSuccess(): void
+    {
+        $scope = new Charset(['iso-8859-1'], 'utf-8');
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Charset', 'iso-8859-1');
+
+        $request = $scope->negotiateRequest($request, 'provider');
+
+        $negotiationProvider = $request->getAttribute('provider');
+        static::assertInstanceOf(Provider::class, $negotiationProvider);
+        static::assertInstanceOf(AcceptCharset::class, $negotiationProvider->get('Accept-Charset'));
+        static::assertSame('iso-8859-1', $negotiationProvider->get('Accept-Charset')->getValue());
+        static::assertSame('iso-8859-1', $request->getHeaderLine('Accept-Charset'));
     }
 }

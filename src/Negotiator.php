@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate;
 
-use Jgut\Negotiate\Scope\ContentType;
 use Jgut\Negotiate\Scope\ScopeInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,20 +29,18 @@ class Negotiator implements MiddlewareInterface
      */
     protected array $scopes = [];
 
-    protected ResponseFactoryInterface $responseFactory;
-
     /**
-     * @param array<ScopeInterface> $scopes
+     * @param list<ScopeInterface> $scopes
      */
-    public function __construct(array $scopes, ResponseFactoryInterface $responseFactory)
-    {
+    public function __construct(
+        array $scopes,
+        protected ResponseFactoryInterface $responseFactory,
+    ) {
         $this->setScopes($scopes);
-
-        $this->responseFactory = $responseFactory;
     }
 
     /**
-     * @param array<ScopeInterface> $scopes
+     * @param list<ScopeInterface> $scopes
      */
     public function setScopes(array $scopes): void
     {
@@ -56,7 +53,7 @@ class Negotiator implements MiddlewareInterface
 
     public function setScope(ScopeInterface $scope): void
     {
-        $name = str_replace(' ', '', ucwords(str_replace('-', ' ', $scope->getHeaderName())));
+        $name = str_replace(' ', '', ucwords(str_replace('-', ' ', mb_strtolower($scope->getHeaderName()))));
 
         $this->scopes[$name] = $scope;
     }
@@ -68,13 +65,11 @@ class Negotiator implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $negotiated = [];
-
-        foreach ($this->scopes as $name => $scope) {
+        foreach ($this->scopes as $scope) {
             try {
-                $negotiated[$name] = $scope->getAccept($request);
-            } catch (Exception $exception) {
-                if ($scope instanceof ContentType) {
+                $request = $scope->negotiateRequest($request, $this->attributeName);
+            } catch (NegotiatorException) {
+                if (mb_strtolower($scope->getHeaderName()) === 'content-type') {
                     return $this->responseFactory->createResponse(415);
                 }
 
@@ -82,6 +77,6 @@ class Negotiator implements MiddlewareInterface
             }
         }
 
-        return $handler->handle($request->withAttribute($this->attributeName, new Provider($negotiated)));
+        return $handler->handle($request);
     }
 }

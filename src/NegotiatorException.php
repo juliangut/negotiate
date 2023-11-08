@@ -13,6 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate;
 
-class Exception extends \Exception
-{
-}
+use Exception;
+
+class NegotiatorException extends Exception {}

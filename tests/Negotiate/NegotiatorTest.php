@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Tests;
 
-use Jgut\Negotiate\Exception;
 use Jgut\Negotiate\Negotiator;
-use Jgut\Negotiate\Scope\AbstractScope;
+use Jgut\Negotiate\Provider;
 use Jgut\Negotiate\Scope\ContentType;
-use Jgut\Negotiate\Tests\Stub\AcceptStub;
+use Jgut\Negotiate\Scope\Language;
+use Jgut\Negotiate\Scope\MediaType;
 use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Negotiation\Accept;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,7 +36,7 @@ class NegotiatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->requestHandler = new class() implements RequestHandlerInterface {
+        $this->requestHandler = new class () implements RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $response = new Response('php://temp');
@@ -48,13 +50,6 @@ class NegotiatorTest extends TestCase
 
     public function testUnsupportedMediaType(): void
     {
-        $scope = $this->getMockBuilder(ContentType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $scope->expects(static::once())
-            ->method('getAccept')
-            ->willThrowException(new Exception());
-
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,24 +61,19 @@ class NegotiatorTest extends TestCase
             ->method('createResponse')
             ->with(415)
             ->willReturn($response);
+
+        $scope = new ContentType(['text/html']);
+
         $middleware = new Negotiator([$scope], $responseFactory);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = (new ServerRequest())
+            ->withAddedHeader('Content-Type', 'application/json');
 
         $middleware->process($request, $this->requestHandler);
     }
 
     public function testNotAcceptable(): void
     {
-        $scope = $this->getMockBuilder(AbstractScope::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $scope->expects(static::once())
-            ->method('getAccept')
-            ->willThrowException(new Exception());
-
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,44 +85,57 @@ class NegotiatorTest extends TestCase
             ->method('createResponse')
             ->with(406)
             ->willReturn($response);
+
+        $scope = new Language(['es']);
+
         $middleware = new Negotiator([$scope], $responseFactory);
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept-Language', 'en');
 
         $middleware->process($request, $this->requestHandler);
     }
 
-    public function testAttribute(): void
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function testRequestModify(): void
     {
-        $scope = $this->getMockBuilder(AbstractScope::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $scope->expects(static::once())
-            ->method('getAccept')
-            ->willReturn(new AcceptStub('application/json'));
-        $scope->expects(static::any())
-            ->method('getHeaderName')
-            ->willReturn('accept');
-
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $scope = new MediaType(['application/json']);
+
         $middleware = new Negotiator([$scope], $responseFactory);
         $middleware->setAttributeName('negotiated');
 
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request->expects(static::once())
-            ->method('withAttribute')
-            ->with('negotiated')
-            ->willReturnSelf();
-        $request->expects(static::once())
-            ->method('getMethod')
-            ->willReturn('GET');
+        $requestHandler = new class ($this) implements RequestHandlerInterface {
+            public function __construct(
+                private TestCase $phpunitAssert,
+            ) {}
 
-        $middleware->process($request, $this->requestHandler);
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $negotiationProvider = $request->getAttribute('negotiated');
+                $this->phpunitAssert::assertInstanceOf(Provider::class, $negotiationProvider);
+
+                $negotiationAccept = $negotiationProvider->get('Accept');
+                $this->phpunitAssert::assertInstanceOf(Accept::class, $negotiationAccept);
+                $this->phpunitAssert::assertSame('application/json', $negotiationAccept->getValue());
+                $this->phpunitAssert::assertSame('application/json', $request->getHeaderLine('Accept'));
+
+                $response = new Response('php://temp');
+                $response->getBody()
+                    ->write($request->getMethod());
+
+                return $response;
+            }
+        };
+
+        $request = (new ServerRequest())
+            ->withAddedHeader('Accept', 'application/json');
+
+        $middleware->process($request, $requestHandler);
     }
 }

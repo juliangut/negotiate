@@ -16,6 +16,7 @@ namespace Jgut\Negotiate\Tests\Stub;
 use Negotiation\AcceptHeader;
 use Negotiation\BaseAccept;
 
-class AcceptStub extends BaseAccept implements AcceptHeader
-{
-}
+/**
+ * @internal
+ */
+final class AcceptStub extends BaseAccept implements AcceptHeader {}

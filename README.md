@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.4-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D8.0-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/negotiate.svg?style=flat-square)](https://packagist.org/packages/juliangut/negotiate)
 [![License](https://img.shields.io/github/license/juliangut/negotiate.svg?style=flat-square)](https://github.com/juliangut/negotiate/blob/master/LICENSE)
 
@@ -7,7 +7,7 @@
 
 # Negotiate
 
-Simple and flexible negotiation middleware based on [willdurand/negotiation](https://github.com/willdurand/Negotiation)
+Simple and flexible negotiation middleware using [willdurand/negotiation](https://github.com/willdurand/Negotiation)
 
 ## Installation
 
@@ -32,8 +32,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 $scopes = [
-    new MediaType(['text/html', 'application/json']),
-    new Language(['en', 'es'], false),
+    new MediaType(['text/html', 'application/json'], 'text/html'),
+    new Language(['en', 'es']),
 ];
 /* @var \Psr\Http\Message\ResponseFactoryInterface $responseFactory */
 
@@ -46,9 +46,9 @@ new class () implements RequestHandlerInterface {
     {
         $negotiationProvider = $request->getAttribute('negotiationProvider');
 
-        $negotiationProvider->get('accept'); // \Negotiation\Accept
+        $negotiationProvider->get('Accept-Language'); // \Negotiation\Accept
         $negotiationProvider->getAcceptLanguage(); // \Negotiation\AcceptLanguage
-        $negotiationProvider->getAcceptLanguageLine(); // negotiated language string
+        $negotiationProvider->getAcceptLanguageLine(); // Negotiated language string
         $negotiationProvider->getAcceptCharset(); // null, not defined
         
         // ...
@@ -58,18 +58,26 @@ new class () implements RequestHandlerInterface {
 
 ### Scopes
 
-Encapsulate negotiation in a context, for example media type or character set. Give it a list of priorities, and you are good to go.
+Encapsulate negotiation in a context, for example media type or character set. Give it a list of priorities, and you are good to go
 
-Additionally, a third parameter controls behaviour if request header is empty or negotiation could not be determined successfully. By default, your list of priorities will be used to create a `\Negotiation\AcceptHeader` you can use. If set to false a `\Jgut\Negotiation\Exception` will be thrown and captured by the middleware
+An optional second parameter controls behaviour if request header is empty or negotiation could not be determined successfully. If set, it will be used to create a `\Negotiation\AcceptHeader`, A `\Jgut\Negotiation\NegotiatorException` will be thrown and captured by the middleware otherwise
 
 ### Middleware
 
 Middleware requires a list of negotiation scopes. Negotiation will take place in the middleware
 
-* If everything goes well request will have an attribute with a `\Jgut\Negotiate\Provider` object
+* If everything goes well request will have 
+  * Headers of each scope overridden with negotiation result
+  * An attribute with a `\Jgut\Negotiate\Provider` object with the result of the whole negotiation
 * If negotiation goes south
   * A 415 response will be returned if Content-Type header negotiation fails
   * A 406 response will be returned if any other negotiation fails
+
+## Migration from 1.x
+
+* PHP minimum required version is PHP 8.0
+* Scope's default should be specified in each constructor should it be needed
+* Scope's negotiateRequest now returns modified request (internal change)
 
 ## Contributing
 

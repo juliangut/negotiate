@@ -13,27 +13,35 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Scope;
 
+use Negotiation\AbstractNegotiator;
 use Negotiation\AcceptEncoding;
-use Negotiation\AcceptHeader;
+use Negotiation\BaseAccept;
 use Negotiation\EncodingNegotiator;
 
-class Encoding extends AbstractScope
+final class Encoding extends AbstractScope
 {
     /**
-     * @param array<string> $priorityList
+     * @param list<string> $priorityList
      */
-    public function __construct(array $priorityList, bool $useDefaults = true)
-    {
-        parent::__construct($priorityList, new EncodingNegotiator(), $useDefaults);
+    public function __construct(
+        array $priorityList,
+        private ?string $default = null,
+    ) {
+        parent::__construct($priorityList);
     }
 
     public function getHeaderName(): string
     {
-        return 'accept-encoding';
+        return 'Accept-Encoding';
     }
 
-    protected function getDefaultAccept(): AcceptHeader
+    protected function getNegotiator(): AbstractNegotiator
     {
-        return new AcceptEncoding(implode(';', $this->priorityList));
+        return new EncodingNegotiator();
+    }
+
+    protected function getDefaultAccept(): ?BaseAccept
+    {
+        return $this->default !== null ? new AcceptEncoding($this->default) : null;
     }
 }

@@ -13,27 +13,35 @@ declare(strict_types=1);
 
 namespace Jgut\Negotiate\Scope;
 
-use Negotiation\AcceptHeader;
+use Negotiation\AbstractNegotiator;
 use Negotiation\AcceptLanguage;
+use Negotiation\BaseAccept;
 use Negotiation\LanguageNegotiator;
 
-class Language extends AbstractScope
+final class Language extends AbstractScope
 {
     /**
-     * @param array<string> $priorityList
+     * @param list<string> $priorityList
      */
-    public function __construct(array $priorityList, bool $useDefaults = true)
-    {
-        parent::__construct($priorityList, new LanguageNegotiator(), $useDefaults);
+    public function __construct(
+        array $priorityList,
+        private ?string $default = null,
+    ) {
+        parent::__construct($priorityList);
     }
 
     public function getHeaderName(): string
     {
-        return 'accept-language';
+        return 'Accept-Language';
     }
 
-    protected function getDefaultAccept(): AcceptHeader
+    protected function getNegotiator(): AbstractNegotiator
     {
-        return new AcceptLanguage(implode(';', $this->priorityList));
+        return new LanguageNegotiator();
+    }
+
+    protected function getDefaultAccept(): ?BaseAccept
+    {
+        return $this->default !== null ? new AcceptLanguage($this->default) : null;
     }
 }
