@@ -23,10 +23,20 @@ use PHPUnit\Framework\TestCase;
  */
 class LanguageTest extends TestCase
 {
+    public function testNegotiationMissing(): void
+    {
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Language" header missing or refused.');
+
+        $scope = new Language(['es']);
+
+        $scope->negotiateRequest(new ServerRequest(), 'provider');
+    }
+
     public function testNegotiationFailure(): void
     {
         $this->expectException(NegotiatorException::class);
-        $this->expectExceptionMessage('"Accept-Language" header refused');
+        $this->expectExceptionMessage('"Accept-Language" header missing or refused.');
 
         $scope = new Language(['es']);
 

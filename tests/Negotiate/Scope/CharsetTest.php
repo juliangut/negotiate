@@ -23,10 +23,20 @@ use PHPUnit\Framework\TestCase;
  */
 class CharsetTest extends TestCase
 {
+    public function testNegotiationMissing(): void
+    {
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Charset" header missing or refused.');
+
+        $scope = new Charset(['utf-8']);
+
+        $scope->negotiateRequest(new ServerRequest(), 'provider');
+    }
+
     public function testNegotiationFailure(): void
     {
         $this->expectException(NegotiatorException::class);
-        $this->expectExceptionMessage('"Accept-Charset" header refused');
+        $this->expectExceptionMessage('"Accept-Charset" header missing or refused.');
 
         $scope = new Charset(['utf-8']);
 

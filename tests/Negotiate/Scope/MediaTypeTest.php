@@ -23,10 +23,20 @@ use PHPUnit\Framework\TestCase;
  */
 class MediaTypeTest extends TestCase
 {
+    public function testNegotiationMissing(): void
+    {
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept" header missing or refused.');
+
+        $scope = new MediaType(['application/json']);
+
+        $scope->negotiateRequest(new ServerRequest(), 'provider');
+    }
+
     public function testNegotiationFailure(): void
     {
         $this->expectException(NegotiatorException::class);
-        $this->expectExceptionMessage('"Accept" header refused');
+        $this->expectExceptionMessage('"Accept" header missing or refused.');
 
         $scope = new MediaType(['application/json']);
 

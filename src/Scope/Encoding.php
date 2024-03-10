@@ -18,16 +18,6 @@ use Negotiation\EncodingNegotiator;
 
 final class Encoding extends AbstractScope
 {
-    /**
-     * @param list<string> $priorityList
-     */
-    public function __construct(
-        array $priorityList,
-        private ?string $default = null,
-    ) {
-        parent::__construct($priorityList);
-    }
-
     public function getHeaderName(): string
     {
         return 'Accept-Encoding';

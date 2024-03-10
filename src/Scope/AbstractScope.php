@@ -25,6 +25,7 @@ abstract class AbstractScope implements ScopeInterface
          * @var list<string> $priorityList
          */
         protected array $priorityList,
+        protected ?string $default = null,
     ) {}
 
     /**
@@ -38,6 +39,11 @@ abstract class AbstractScope implements ScopeInterface
     public function appendPriority(string $priority): void
     {
         $this->priorityList[] = $priority;
+    }
+
+    public function setDefault(?string $default): void
+    {
+        $this->default = $default;
     }
 
     public function negotiateRequest(ServerRequestInterface $request, string $attributeName): ServerRequestInterface
@@ -80,7 +86,7 @@ abstract class AbstractScope implements ScopeInterface
                 return $default;
             }
 
-            throw new NegotiatorException(sprintf('"%s" header refused.', $this->getHeaderName()));
+            throw new NegotiatorException(sprintf('"%s" header missing or refused.', $this->getHeaderName()));
         }
 
         return $accept;

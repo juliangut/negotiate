@@ -23,10 +23,20 @@ use PHPUnit\Framework\TestCase;
  */
 class EncodingTest extends TestCase
 {
+    public function testNegotiationMissing(): void
+    {
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Accept-Encoding" header missing or refused.');
+
+        $scope = new Encoding(['gzip']);
+
+        $scope->negotiateRequest(new ServerRequest(), 'provider');
+    }
+
     public function testNegotiationFailure(): void
     {
         $this->expectException(NegotiatorException::class);
-        $this->expectExceptionMessage('"Accept-Encoding" header refused');
+        $this->expectExceptionMessage('"Accept-Encoding" header missing or refused.');
 
         $scope = new Encoding(['gzip']);
 

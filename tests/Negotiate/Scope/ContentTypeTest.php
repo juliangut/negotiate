@@ -23,10 +23,20 @@ use PHPUnit\Framework\TestCase;
  */
 class ContentTypeTest extends TestCase
 {
+    public function testNegotiationMissing(): void
+    {
+        $this->expectException(NegotiatorException::class);
+        $this->expectExceptionMessage('"Content-Type" header missing or refused.');
+
+        $scope = new ContentType(['text/html']);
+
+        $scope->negotiateRequest(new ServerRequest(), 'provider');
+    }
+
     public function testNegotiationFailure(): void
     {
         $this->expectException(NegotiatorException::class);
-        $this->expectExceptionMessage('"Content-Type" header refused');
+        $this->expectExceptionMessage('"Content-Type" header missing or refused.');
 
         $scope = new ContentType(['text/html']);
 
