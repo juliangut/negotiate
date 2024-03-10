@@ -50,7 +50,7 @@ final class Provider
     }
 
     /**
-     * @param array<mixed> $arguments
+     * @param array<int|string, mixed> $arguments
      */
     public function __call(string $name, array $arguments): AcceptHeader|BaseAccept|string|null
     {

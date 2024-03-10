@@ -33,7 +33,7 @@ final class ScopeStub extends AbstractScope
     }
 
     /**
-     * @return array<mixed>
+     * @return list<string>
      */
     public function getPriorityList(): array
     {

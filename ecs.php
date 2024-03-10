@@ -12,22 +12,28 @@ declare(strict_types=1);
 use Jgut\ECS\Config\ConfigSet80;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
-return static function (ECSConfig $ecsConfig): void {
-    $header = <<<'HEADER'
+$configSet = (new ConfigSet80())
+    ->setHeader(<<<'HEADER'
     (c) 2017-{{year}} Julián Gutiérrez <juliangut@gmail.com>
 
     @license BSD-3-Clause
     @link https://github.com/juliangut/negotiate
-    HEADER;
+    HEADER)
+    ->enablePhpUnitRules();
+$paths = [
+    __FILE__,
+    __DIR__ . '/src',
+    __DIR__ . '/tests',
+];
 
-    $ecsConfig->paths([
-        __FILE__,
-        __DIR__ . '/src',
-        __DIR__ . '/tests',
-    ]);
+if (!method_exists(ECSConfig::class, 'configure')) {
+    return static function (ECSConfig $ecsConfig) use ($configSet, $paths): void {
+        $ecsConfig->paths($paths);
 
-    (new ConfigSet80())
-        ->setHeader($header)
-        ->enablePhpUnitRules()
-        ->configure($ecsConfig);
-};
+        $configSet->configure($ecsConfig);
+    };
+}
+
+return $configSet
+    ->configureBuilder()
+    ->withPaths($paths);
