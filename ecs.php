@@ -1,7 +1,7 @@
 <?php
 
 /*
- * (c) 2017-2023 Julián Gutiérrez <juliangut@gmail.com>
+ * (c) 2017-2024 Julián Gutiérrez <juliangut@gmail.com>
  *
  * @license BSD-3-Clause
  * @link https://github.com/juliangut/negotiate
@@ -25,7 +25,6 @@ return static function (ECSConfig $ecsConfig): void {
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ]);
-    $ecsConfig->cacheDirectory('.ecs.cache');
 
     (new ConfigSet80())
         ->setHeader($header)
